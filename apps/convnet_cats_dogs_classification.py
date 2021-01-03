@@ -5,8 +5,20 @@ from keras import models, layers, optimizers
 from keras.preprocessing.image import ImageDataGenerator
 import matplotlib.pyplot as plt
 import time
+import os
 
-orig_path = 'C:/Datasets/dogs_vs_cats/'
+# Compatibility to avoid error:
+# tensorflow.python.framework.errors_impl.NotFoundError:  No algorithm worked!
+from tensorflow.compat.v1 import ConfigProto
+from tensorflow.compat.v1 import InteractiveSession
+
+config = ConfigProto()
+config.gpu_options.allow_growth = True
+session = InteractiveSession(config=config)
+
+
+dataDir = os.environ['DATASETS_DIR']
+orig_path = os.path.join(dataDir, 'dogs_vs_cats')
 startTime = time.time()
 
 # Min image sizes for directories
@@ -36,7 +48,7 @@ valSz = 500
 testSz = 500
 
 # Create new dirs
-path = 'C:/Datasets/dogs_vs_cats_small'
+path = os.path.join(dataDir, 'dogs_vs_cats_small')
 if not os.path.exists(path):
     os.mkdir(path)
 
@@ -128,7 +140,7 @@ valGen = trainDataGen.flow_from_directory(valDir, target_size=(150,150), batch_s
 #    print('Labels shape: ', labelBatch.shape)
 #    break
 
-hist = model.fit_generator(trainGen, steps_per_epoch=100, epochs=30, validation_data=valGen, validation_steps=50)
+hist = model.fit(trainGen, steps_per_epoch=100, epochs=30, validation_data=valGen, validation_steps=50)
 model.save('cats_n_dogs_small.h5')
 print(hist.history.keys())
 print('It took {} sec'.format( time.time() - startTime ))
@@ -153,10 +165,24 @@ plt.legend()
 plt.show()
 
 """
+CPU (laptop, 4 cores):
 Epoch 30/30
 100/100 [==============================] - 58s 583ms/step - loss: 0.0486 - acc: 0.9855 - val_loss: 0.9603 - val_acc: 0.7340
-dict_keys(['val_loss', 'val_acc', 'loss', 'acc'])
 It took 1773.8488445281982 sec
+"""
+
+"""
+CPU (desktop, 8 cores):
+Epoch 30/30
+100/100 [==============================] - 15s 152ms/step - loss: 0.0363 - acc: 0.9973 - val_loss: 0.9803 - val_acc: 0.7330
+It took 458.14360189437866 sec
+"""
+
+"""
+GPU:
+Epoch 30/30
+100/100 [==============================] - 2s 23ms/step - loss: 0.0423 - acc: 0.9913 - val_loss: 0.9683 - val_acc: 0.7340
+It took 72.86363244056702 sec
 """
 
 

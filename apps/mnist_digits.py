@@ -4,6 +4,7 @@ from keras.datasets import mnist
 from keras import models, layers
 from keras.utils import to_categorical
 import matplotlib.pyplot as plt
+import time
 
 
 def showDigit(digit, label):
@@ -13,6 +14,7 @@ def showDigit(digit, label):
     plt.show()
 
 
+startTime = time.time()
 (train_images, train_labels), (test_images, test_labels) = mnist.load_data()
 # Show a few first digits
 #for i in range(10):
@@ -40,6 +42,7 @@ network.fit(train_images, train_labels, epochs=5, batch_size=128)
 test_loss, test_acc = network.evaluate(test_images, test_labels)
 print('Test loss: ', test_loss)
 print('Test accuracy: ', test_acc)
+print('It took {} sec'.format(time.time() -  startTime))
 
 # Results
 """ ...
@@ -47,4 +50,15 @@ Epoch 5/5
 60000/60000 [==============================] - 4s 64us/step - loss: 0.0377 - acc: 0.9888
 10000/10000 [==============================] - 0s 38us/step
 Test loss:  0.07058643732223427
-Test accuracy:  0.979 """
+Test accuracy:  0.979
+"""
+
+"""
+GPU:
+Epoch 5/5
+469/469 [==============================] - 0s 896us/step - loss: 0.0359 - accuracy: 0.9893
+313/313 [==============================] - 0s 668us/step - loss: 0.0636 - accuracy: 0.9808
+Test loss:  0.06355077028274536
+Test accuracy:  0.9807999730110168
+It took 3.6985509395599365 sec
+"""
