@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e8bcb616-e572-4232-827d-ced1ce50839b" name="Default Changelist" comment="">
+    <list default="true" id="e8bcb616-e572-4232-827d-ced1ce50839b" name="Default Changelist" comment="Adding timing. Adaptations to Ubuntu env. Optimizations.&#10;Switch CUDA 10.1 -&gt; 11.2 seems to reduce performance by x2 ???">
       <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/ml_charm.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/ml_charm.iml" afterDir="false" />
@@ -195,6 +195,14 @@
       <option name="presentableId" value="Default" />
       <updated>1608610511267</updated>
     </task>
+    <task id="LOCAL-00001" summary="Adding timing. Adaptations to Ubuntu env. Optimizations.&#10;Switch CUDA 10.1 -&gt; 11.2 seems to reduce performance by x2 ???">
+      <created>1609643919832</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1609643919832</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -208,6 +216,10 @@
       </map>
     </option>
     <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Adding timing. Adaptations to Ubuntu env. Optimizations.&#10;Switch CUDA 10.1 -&gt; 11.2 seems to reduce performance by x2 ???" />
+    <option name="LAST_COMMIT_MESSAGE" value="Adding timing. Adaptations to Ubuntu env. Optimizations.&#10;Switch CUDA 10.1 -&gt; 11.2 seems to reduce performance by x2 ???" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
