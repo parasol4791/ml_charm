@@ -51,6 +51,14 @@ print('It took {} sec'.format(time.time() - startTime))
 plot_the_model(trained_weight, trained_bias, my_feature, my_label)
 plot_the_loss_curve(epochs, rmse)
 
+
+"""
+CPU:
+Epoch 50/50
+1/1 [==============================] - 0s 42ms/step - loss: 1.1437 - root_mean_squared_error: 1.0695
+It took 6.442007303237915 sec
+"""
+
 """
 GPU:
 Epoch 50/50

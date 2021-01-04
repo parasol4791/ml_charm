@@ -84,8 +84,16 @@ plt.ylabel('Accuracy')
 plt.legend()
 plt.show()
 
+"""
+CPU:
+Epoch 10/10
+25/25 [==============================] - 1s 26ms/step - loss: 0.1271 - binary_accuracy: 0.9614 - val_loss: 0.3040 - val_binary_accuracy: 0.8803
+It took 15.316411256790161 sec
+"""
 
-# GPU:
-# Epoch 10/10
-# 25/25 [==============================] - 0s 20ms/step - loss: 0.1289 - binary_accuracy: 0.9584 - val_loss: 0.3073 - val_binary_accuracy: 0.8797
-# It took 11.001086711883545 sec
+"""
+GPU:
+Epoch 10/10
+25/25 [==============================] - 0s 20ms/step - loss: 0.1289 - binary_accuracy: 0.9584 - val_loss: 0.3073 - val_binary_accuracy: 0.8797
+It took 11.001086711883545 sec
+"""

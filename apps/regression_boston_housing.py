@@ -86,9 +86,20 @@ plt.xlabel('Epochs')
 plt.ylabel('Validation MAE')
 plt.show()
 
-# GPU:
-# Model 0 took 32.52755403518677 sec
-# Model 1 took 32.75090432167053 sec
-# Model 2 took 33.09609603881836 sec
-# Model 3 took 31.89526391029358 sec
-# It took 130.7237582206726 sec
+"""
+CPU:
+Model 0 took 36.613349199295044 sec
+Model 1 took 38.92548966407776 sec
+Model 2 took 40.85271883010864 sec
+Model 3 took 43.45703458786011 sec
+It took 159.9553074836731 sec
+"""
+
+"""
+GPU:
+Model 0 took 32.52755403518677 sec
+Model 1 took 32.75090432167053 sec
+Model 2 took 33.09609603881836 sec
+Model 3 took 31.89526391029358 sec
+It took 130.7237582206726 sec
+"""

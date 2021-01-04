@@ -44,13 +44,14 @@ print('Test loss: ', test_loss)
 print('Test accuracy: ', test_acc)
 print('It took {} sec'.format(time.time() -  startTime))
 
-# Results
 """ ...
+CPU:
 Epoch 5/5
-60000/60000 [==============================] - 4s 64us/step - loss: 0.0377 - acc: 0.9888
-10000/10000 [==============================] - 0s 38us/step
-Test loss:  0.07058643732223427
-Test accuracy:  0.979
+469/469 [==============================] - 7s 16ms/step - loss: 0.0362 - accuracy: 0.9890
+313/313 [==============================] - 2s 3ms/step - loss: 0.0643 - accuracy: 0.9803
+Test loss:  0.06431321054697037
+Test accuracy:  0.9803000092506409
+It took 44.74754977226257 sec
 """
 
 """

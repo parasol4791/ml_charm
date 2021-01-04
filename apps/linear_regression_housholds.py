@@ -114,6 +114,15 @@ plot_the_loss_curve(epochs, np.array(rmse))
 sample_start = 100
 predict_house_values(sample_start, 10, training_df, my_feature, my_label)
 
+"""
+CPU:
+Epoch 30/30
+539/539 [==============================] - 1s 3ms/step - loss: 5271.3994 - root_mean_squared_error: 72.5870
+
+The learned weight for your model is 40.1514
+The learned bias for your model is 43.4411
+It took 54.71697521209717 sec
+"""
 
 """
 GPU (presumably, with CUDA 10.1):

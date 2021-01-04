@@ -82,7 +82,14 @@ for pred, label in zip(predictions, test_labels):
 print('{} out of {} matches. Match rate is {}'.format(matches, len(test_labels), matches/len(test_labels)))
 
 """
-# GPU:
+CPU:
+Epoch 10/10
+16/16 [==============================] - 0s 16ms/step - loss: 0.2495 - accuracy: 0.9446 - val_loss: 0.8983 - val_accuracy: 0.8180
+It took 5.0334391593933105 sec
+"""
+
+"""
+GPU:
 Epoch 10/10
 16/16 [==============================] - 0s 6ms/step - loss: 0.2291 - accuracy: 0.9469 - val_loss: 0.8989 - val_accuracy: 0.8200
 It took 3.0891404151916504 sec
