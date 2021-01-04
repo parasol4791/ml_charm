@@ -8,6 +8,16 @@ import matplotlib.pyplot as plt
 import time
 
 
+# Compatibility to avoid error:
+# tensorflow.python.framework.errors_impl.NotFoundError:  No algorithm worked!
+from tensorflow.compat.v1 import ConfigProto
+from tensorflow.compat.v1 import InteractiveSession
+
+config = ConfigProto()
+config.gpu_options.allow_growth = True
+session = InteractiveSession(config=config)
+
+
 def showDigit(digit, label):
     '''Shows a representation of a single digit'''
     plt.imshow(digit, cmap=plt.cm.binary)
@@ -18,7 +28,7 @@ def showDigit(digit, label):
 startTime = time.time()
 (train_images, train_labels), (test_images, test_labels) = mnist.load_data()
 # Show a few first digits
-#for i in range(10):
+# for i in range(10):
 #    showDigit(train_images[i], train_labels[i])
 
 network = models.Sequential()
@@ -54,8 +64,7 @@ print('Test loss: ', test_loss)
 print('Test accuracy: ', test_acc)
 print('It took {} sec'.format(time.time() - startTime))
 
-# Results
-""" ...
+"""
 CPU:
 Epoch 5/5
 938/938 [==============================] - 27s 28ms/step - loss: 0.0205 - accuracy: 0.9935
@@ -63,4 +72,14 @@ Epoch 5/5
 Test loss:  0.024745531380176544
 Test accuracy:  0.9922000169754028
 It took 134.6048243045807 sec
+"""
+
+"""
+GPU:
+Epoch 5/5
+938/938 [==============================] - 2s 2ms/step - loss: 0.0193 - accuracy: 0.9944
+313/313 [==============================] - 0s 963us/step - loss: 0.0309 - accuracy: 0.9908
+Test loss:  0.03085430897772312
+Test accuracy:  0.9908000230789185
+It took 10.864889860153198 sec
 """
