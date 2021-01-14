@@ -1,18 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e8bcb616-e572-4232-827d-ced1ce50839b" name="Default Changelist" comment="Adding timing. Adaptations to Ubuntu env. Optimizations.&#10;Switch CUDA 10.1 -&gt; 11.2 seems to reduce performance by x2 ???">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/ml_charm.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/ml_charm.iml" afterDir="false" />
+    <list default="true" id="e8bcb616-e572-4232-827d-ced1ce50839b" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/apps/binary_classification_imdb.py" beforeDir="false" afterPath="$PROJECT_DIR$/apps/binary_classification_imdb.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/apps/cats_n_dogs_small.h5" beforeDir="false" afterPath="$PROJECT_DIR$/apps/cats_n_dogs_small.h5" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/apps/linear_regression.py" beforeDir="false" afterPath="$PROJECT_DIR$/apps/linear_regression.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/apps/linear_regression_housholds.py" beforeDir="false" afterPath="$PROJECT_DIR$/apps/linear_regression_housholds.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/apps/mnist_digits.py" beforeDir="false" afterPath="$PROJECT_DIR$/apps/mnist_digits.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/apps/mnist_digits_convnet.py" beforeDir="false" afterPath="$PROJECT_DIR$/apps/mnist_digits_convnet.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/apps/n_classification_reuters.py" beforeDir="false" afterPath="$PROJECT_DIR$/apps/n_classification_reuters.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/apps/regression_boston_housing.py" beforeDir="false" afterPath="$PROJECT_DIR$/apps/regression_boston_housing.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/convnet_cats_dogs_classification.py" beforeDir="false" afterPath="$PROJECT_DIR$/apps/convnet_cats_dogs_classification.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,10 +26,15 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../pythonProject" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/apps" />
     <property name="settings.editor.selected.configurable" value="Errors" />
   </component>
-  <component name="RunManager" selected="Python.regression_boston_housing">
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Synch\Python\ml_charm\apps" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Python.convnet_cats_dogs_classification">
     <configuration name="convnet_cats_dogs_classification" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="ml_charm" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -200,7 +197,14 @@
       <option name="project" value="LOCAL" />
       <updated>1609643919832</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Adding timing. Adaptations to Ubuntu env. Optimizations.&#10;Switch CUDA 10.1 -&gt; 11.2 seems to reduce performance by x2 ???">
+      <created>1609721746542</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1609721746542</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">

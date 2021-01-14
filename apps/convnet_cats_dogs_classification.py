@@ -129,18 +129,28 @@ model.add(layers.Dense(1, activation='sigmoid')) # binary classification, a prob
 print(model.summary())
 model.compile(loss='binary_crossentropy', optimizer=optimizers.RMSprop(lr=1.e-4), metrics=['acc'])
 
-trainDataGen = ImageDataGenerator(rescale=1./255.)
+# Using image augmentation to increase sample set, and improve model accuracy
+trainDataGen = ImageDataGenerator(
+    rescale=1./255.,
+    rotation_range = 40,
+    width_shift_range = 0.2,
+    height_shift_range = 0.2,
+    shear_range = 0.2,
+    zoom_range = 0.2,
+    horizontal_flip = True,
+)
 testDataGen = ImageDataGenerator(rescale=1./255.)
 
 trainGen = trainDataGen.flow_from_directory(trainDir, target_size=(150,150), batch_size=20, class_mode='binary')
-valGen = trainDataGen.flow_from_directory(valDir, target_size=(150,150), batch_size=20, class_mode='binary')
+# Do not augment validation data!!!
+valGen = testDataGen.flow_from_directory(valDir, target_size=(150,150), batch_size=20, class_mode='binary')
 
 #for dataBatch, labelBatch in trainGen:
 #    print('Data batch shape: ', dataBatch.shape)
 #    print('Labels shape: ', labelBatch.shape)
 #    break
 
-hist = model.fit(trainGen, steps_per_epoch=100, epochs=30, validation_data=valGen, validation_steps=50)
+hist = model.fit(trainGen, steps_per_epoch=100, epochs=100, validation_data=valGen, validation_steps=50)
 model.save('cats_n_dogs_small.h5')
 print(hist.history.keys())
 print('It took {} sec'.format( time.time() - startTime ))
