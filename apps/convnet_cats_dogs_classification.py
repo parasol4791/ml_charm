@@ -1,5 +1,5 @@
 
-import os, shutil
+import shutil
 from utils.files import imageDirStats
 from keras import models, layers, optimizers
 from keras.preprocessing.image import ImageDataGenerator
@@ -17,6 +17,15 @@ config.gpu_options.allow_growth = True
 session = InteractiveSession(config=config)
 
 
+def make_dir(path1, path2):
+    """Concatenates path1 & path2 into a new dir.
+       Created the dir, if it does not extis"""
+    new_dir = os.path.join(path1, path2)
+    if not os.path.exists(new_dir):
+        os.mkdir(new_dir)
+    return new_dir
+
+
 dataDir = os.environ['DATASETS_DIR']
 orig_path = os.path.join(dataDir, 'dogs_vs_cats')
 startTime = time.time()
@@ -31,8 +40,8 @@ dirs.append(origTestCatsDir)
 origTestDogsDir = os.path.join(orig_path, 'test_set/dogs/')
 dirs.append(origTestDogsDir)
 
-for dir in dirs:
-    print(dir, imageDirStats(dir))
+for d in dirs:
+    print(d, imageDirStats(d))
 
 # Results:
 """ 
@@ -43,49 +52,26 @@ C:/Datasets/dogs_vs_cats/test_set/dogs/ {'nImages': 1012, 'minH': (92, 113), 'mi
 """
 
 # Extract a smaller subset of images for training/validation/testing and move them to new directories
-trainSz = 1000 # 1000 for cats, and 1000 for dogs
+trainSz = 1000  # 1000 for cats, and 1000 for dogs
 valSz = 500
 testSz = 500
 
 # Create new dirs
-path = os.path.join(dataDir, 'dogs_vs_cats_small')
-if not os.path.exists(path):
-    os.mkdir(path)
-
-trainDir = os.path.join(path, 'train')
-if not os.path.exists(trainDir):
-    os.mkdir(trainDir)
-trainDirDogs = os.path.join(trainDir, 'dogs')
-if not os.path.exists(trainDirDogs):
-    os.mkdir(trainDirDogs)
-trainDirCats = os.path.join(trainDir, 'cats')
-if not os.path.exists(trainDirCats):
-    os.mkdir(trainDirCats)
-
-valDir = os.path.join(path, 'validate')
-if not os.path.exists(valDir):
-    os.mkdir(valDir)
-valDirDogs = os.path.join(valDir, 'dogs')
-if not os.path.exists(valDirDogs):
-    os.mkdir(valDirDogs)
-valDirCats = os.path.join(valDir, 'cats')
-if not os.path.exists(valDirCats):
-    os.mkdir(valDirCats)
-
-testDir = os.path.join(path, 'test')
-if not os.path.exists(testDir):
-    os.mkdir(testDir)
-testDirDogs = os.path.join(testDir, 'dogs')
-if not os.path.exists(testDirDogs):
-    os.mkdir(testDirDogs)
-testDirCats = os.path.join(testDir, 'cats')
-if not os.path.exists(testDirCats):
-    os.mkdir(testDirCats)
+path = make_dir(dataDir, 'dogs_vs_cats_small')
+trainDir = make_dir(path, 'train')
+trainDirDogs = make_dir(trainDir, 'dogs')
+trainDirCats = make_dir(trainDir, 'cats')
+valDir = make_dir(path, 'validate')
+valDirDogs = make_dir(valDir, 'dogs')
+valDirCats = make_dir(valDir, 'cats')
+testDir = make_dir(path, 'test')
+testDirDogs = make_dir(testDir, 'dogs')
+testDirCats = make_dir(testDir, 'cats')
 
 # Copy over the files
 for animal in ['cat', 'dog']:
     # Training
-    fNames = ['{}.{}.jpg'.format(animal, i) for i in range(1,trainSz+1)]
+    fNames = ['{}.{}.jpg'.format(animal, i) for i in range(1, trainSz+1)]
     for fName in fNames:
         src = os.path.join(orig_path, 'training_set', '{}s'.format(animal), fName)
         dest = os.path.join(path, 'train', '{}s'.format(animal), fName)
@@ -113,18 +99,18 @@ print(testDirCats, len(os.listdir(testDirCats)))
 print(testDirDogs, len(os.listdir(testDirDogs)))
 
 # Build a model
-model =  models.Sequential()
-model.add(layers.Conv2D(32, (3,3), activation='relu', input_shape=(150,150,3)))
-model.add(layers.MaxPooling2D(2,2))
-model.add(layers.Conv2D(64, (3,3), activation='relu'))
-model.add(layers.MaxPooling2D(2,2))
-model.add(layers.Conv2D(128, (3,3), activation='relu'))
-model.add(layers.MaxPooling2D(2,2))
-model.add(layers.Conv2D(128, (3,3), activation='relu'))
-model.add(layers.MaxPooling2D(2,2))
+model = models.Sequential()
+model.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=(150, 150, 3)))
+model.add(layers.MaxPooling2D(2, 2))
+model.add(layers.Conv2D(64, (3, 3), activation='relu'))
+model.add(layers.MaxPooling2D(2, 2))
+model.add(layers.Conv2D(128, (3, 3), activation='relu'))
+model.add(layers.MaxPooling2D(2, 2))
+model.add(layers.Conv2D(128, (3, 3), activation='relu'))
+model.add(layers.MaxPooling2D(2, 2))
 model.add(layers.Flatten())
 model.add(layers.Dense(512, activation='relu'))
-model.add(layers.Dense(1, activation='sigmoid')) # binary classification, a probability of being either a 'cat' or a 'dog'
+model.add(layers.Dense(1, activation='sigmoid'))  # binary classification, a probability of being either a 'cat' or a 'dog'
 
 print(model.summary())
 model.compile(loss='binary_crossentropy', optimizer=optimizers.RMSprop(lr=1.e-4), metrics=['acc'])
@@ -144,16 +130,18 @@ testDataGen = ImageDataGenerator(rescale=1./255.)
 trainGen = trainDataGen.flow_from_directory(trainDir, target_size=(150,150), batch_size=20, class_mode='binary')
 # Do not augment validation data!!!
 valGen = testDataGen.flow_from_directory(valDir, target_size=(150,150), batch_size=20, class_mode='binary')
+trainGen = trainDataGen.flow_from_directory(trainDir, target_size=(150, 150), batch_size=20, class_mode='binary')
+valGen = trainDataGen.flow_from_directory(valDir, target_size=(150, 150), batch_size=20, class_mode='binary')
 
-#for dataBatch, labelBatch in trainGen:
+# for dataBatch, labelBatch in trainGen:
 #    print('Data batch shape: ', dataBatch.shape)
 #    print('Labels shape: ', labelBatch.shape)
 #    break
 
-hist = model.fit(trainGen, steps_per_epoch=100, epochs=100, validation_data=valGen, validation_steps=50)
+hist = model.fit(trainGen, steps_per_epoch=100, epochs=30, validation_data=valGen, validation_steps=50)
 model.save('cats_n_dogs_small.h5')
 print(hist.history.keys())
-print('It took {} sec'.format( time.time() - startTime ))
+print('It took {} sec'.format(time.time() - startTime))
 
 
 acc = hist.history['acc']

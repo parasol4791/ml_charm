@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="e8bcb616-e572-4232-827d-ced1ce50839b" name="Default Changelist" comment="">
+    <list default="true" id="e8bcb616-e572-4232-827d-ced1ce50839b" name="Default Changelist" comment="Adding timing. Adaptations to Ubuntu env. Optimizations.&#10;Switch CUDA 10.1 -&gt; 11.2 seems to reduce performance by x2 ???">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/apps/cats_n_dogs_small.h5" beforeDir="false" afterPath="$PROJECT_DIR$/apps/cats_n_dogs_small.h5" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/apps/convnet_cats_dogs_classification.py" beforeDir="false" afterPath="$PROJECT_DIR$/apps/convnet_cats_dogs_classification.py" afterDir="false" />
@@ -14,8 +17,13 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProblemsViewState">
-    <option name="selectedIndex" value="1" />
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
   </component>
   <component name="ProjectId" id="1lzqwzLDapYgc38PnU8bl6bK2jB" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -26,13 +34,8 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/apps" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../pythonProject" />
     <property name="settings.editor.selected.configurable" value="Errors" />
-  </component>
-  <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Synch\Python\ml_charm\apps" />
-    </key>
   </component>
   <component name="RunManager" selected="Python.convnet_cats_dogs_classification">
     <configuration name="convnet_cats_dogs_classification" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
@@ -165,17 +168,17 @@
     </configuration>
     <list>
       <item itemvalue="Python.convnet_cats_dogs_classification" />
-      <item itemvalue="Python.mnist_digits" />
       <item itemvalue="Python.linear_regression_housholds" />
+      <item itemvalue="Python.mnist_digits" />
       <item itemvalue="Python.mnist_digits_convnet" />
       <item itemvalue="Python.n_classification_reuters" />
       <item itemvalue="Python.regression_boston_housing" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.mnist_digits_convnet" />
         <item itemvalue="Python.regression_boston_housing" />
         <item itemvalue="Python.n_classification_reuters" />
-        <item itemvalue="Python.mnist_digits_convnet" />
         <item itemvalue="Python.mnist_digits" />
         <item itemvalue="Python.linear_regression_housholds" />
       </list>
@@ -197,14 +200,7 @@
       <option name="project" value="LOCAL" />
       <updated>1609643919832</updated>
     </task>
-    <task id="LOCAL-00002" summary="Adding timing. Adaptations to Ubuntu env. Optimizations.&#10;Switch CUDA 10.1 -&gt; 11.2 seems to reduce performance by x2 ???">
-      <created>1609721746542</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1609721746542</updated>
-    </task>
-    <option name="localTasksCounter" value="3" />
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -226,11 +222,6 @@
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/apps/convnet_cats_dogs_classification.py</url>
-          <line>19</line>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/utils/plotting.py</url>
           <line>31</line>
