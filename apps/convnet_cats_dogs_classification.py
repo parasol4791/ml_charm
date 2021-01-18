@@ -137,8 +137,9 @@ valGen = testDataGen.flow_from_directory(valDir, target_size=(150, 150), batch_s
 #    print('Labels shape: ', labelBatch.shape)
 #    break
 
-hist = model.fit(trainGen, steps_per_epoch=100, epochs=100, validation_data=valGen, validation_steps=50)
-model.save('cats_n_dogs_small.h5')
+hist = model.fit(trainGen, epochs=100, steps_per_epoch=100, validation_data=valGen, validation_steps=50)
+outputs_dir = os.environ['OUTPUTS_DIR']
+model.save(os.path.join(outputs_dir, 'cats_n_dogs_small.h5'))
 print(hist.history.keys())
 print('It took {} sec'.format(time.time() - startTime))
 
