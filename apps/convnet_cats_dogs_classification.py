@@ -1,3 +1,5 @@
+# Binary classification of images 'dogs' vs 'cats'
+# Uses convolution neural network (CNN) with augmentation
 
 import shutil
 from utils.files import imageDirStats
@@ -7,14 +9,9 @@ import matplotlib.pyplot as plt
 import time
 import os
 
-# Compatibility to avoid error:
-# tensorflow.python.framework.errors_impl.NotFoundError:  No algorithm worked!
-from tensorflow.compat.v1 import ConfigProto
-from tensorflow.compat.v1 import InteractiveSession
-
-config = ConfigProto()
-config.gpu_options.allow_growth = True
-session = InteractiveSession(config=config)
+# To avoid an error (see the method)
+from utils.compatibility import compat_no_algo
+compat_no_algo()
 
 
 def make_dir(path1, path2):
