@@ -1,3 +1,7 @@
+# Binary classification of images 'dogs' vs 'cats'
+# Uses convolution base of pre-trained CNN model VGG16 with a custom classifier (feature extraction).
+# No image augmentation is done!
+
 import os
 import numpy as np
 from keras import models, layers, optimizers
@@ -12,7 +16,7 @@ compat_no_algo()
 
 conv_base = VGG16(
     weights='imagenet',
-    include_top=False,
+    include_top=False,  # original top 'Dense' layers used for classification are excluded
     input_shape=(150, 150, 3)
 )
 
