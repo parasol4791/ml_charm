@@ -1,12 +1,14 @@
 # Single label, multi-class classification
 
+import time
+
 import numpy as np
+from keras import models, layers
 from keras.datasets import reuters
 from keras.utils import to_categorical
-from keras import models, layers
-from utils.plotting import plot_accuracy_loss
+
 from utils.data_preprocessing import decodeSequence, vectorize
-import time
+from utils.plotting import plot_accuracy_loss
 
 # To resolve an error while loading imdb dataset
 # np_load_old = np.load
@@ -14,10 +16,10 @@ import time
 
 startTime = time.time()
 NUM_WORDS = 10000
-(train_data,train_labels), (test_data,test_labels) = reuters.load_data(num_words=NUM_WORDS)
+(train_data, train_labels), (test_data, test_labels) = reuters.load_data(num_words=NUM_WORDS)
 print(len(train_data))
 print(len(test_data))
-print( decodeSequence(reuters, train_data[0]))
+print(decodeSequence(reuters, train_data[0]))
 
 # Vectorize input data
 x_train = vectorize(train_data, NUM_WORDS)
@@ -40,7 +42,7 @@ model.add(layers.Dense(46, activation='softmax'))
 
 model.compile(optimizer='rmsprop', loss='categorical_crossentropy', metrics=['accuracy'])
 
-history = model.fit(x_train_part, y_train_part, epochs=10, batch_size=512, validation_data=(x_val,y_val))
+history = model.fit(x_train_part, y_train_part, epochs=10, batch_size=512, validation_data=(x_val, y_val))
 
 print('It took {} sec'.format(time.time() - startTime))
 
@@ -60,7 +62,7 @@ for pred, label in zip(predictions, test_labels):
     if predCat == label:
         matches += 1
     print(max(pred), predCat, label)
-print('{} out of {} matches. Match rate is {}'.format(matches, len(test_labels), matches/len(test_labels)))
+print('{} out of {} matches. Match rate is {}'.format(matches, len(test_labels), matches / len(test_labels)))
 
 """
 CPU:

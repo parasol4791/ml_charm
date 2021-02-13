@@ -1,9 +1,11 @@
+import time
+
+import matplotlib.pyplot as plt
 import numpy as np
 from keras import models, layers
 from keras.datasets import boston_housing
-import matplotlib.pyplot as plt
+
 from utils.plotting import smooth_curve
-import time
 
 
 def build_model(traindata):
@@ -39,7 +41,7 @@ all_scores = []
 all_mae_histories = []
 for i in range(k):
     bound1 = i * setSize
-    bound2 = (i+1) * setSize
+    bound2 = (i + 1) * setSize
     val_data = train_data[bound1: bound2]
     val_targets = train_targets[bound1: bound2]
     train_data_part = np.concatenate([train_data[:bound1], train_data[bound2:]], axis=0)
@@ -51,7 +53,7 @@ for i in range(k):
     # model.fit(train_data_part, train_targets_part, epochs=numEpochs, batch_size=1, verbose=0)
     # val_mse, val_mae = model.evaluate(val_data, val_targets, verbose=0)
     # all_scores.append(val_mae)
-# print('Average MAE: ', np.mean(all_scores))
+    # print('Average MAE: ', np.mean(all_scores))
 
     # Alternatively, plotting validation scores, averaged over all models
     t1 = time.time()
@@ -62,17 +64,17 @@ for i in range(k):
         validation_data=(val_data, val_targets),
         epochs=numEpochs, batch_size=1,
         verbose=0)
-    print('Model {} took {} sec'.format(i, time.time()-t1))
+    print('Model {} took {} sec'.format(i, time.time() - t1))
 
     mae_hist = history.history['val_mae']
     all_mae_histories.append(mae_hist)
 # Average across models
 avg_mae_hist = [np.mean([x[i] for x in all_mae_histories]) for i in range(numEpochs)]
 
-print('It took {} sec'.format(time.time()-startTime))
+print('It took {} sec'.format(time.time() - startTime))
 
 # Plot valuation evolution
-x = range(1, len(avg_mae_hist)+1)
+x = range(1, len(avg_mae_hist) + 1)
 plt.plot(x, avg_mae_hist)
 plt.xlabel('Epochs')
 plt.ylabel('Validation MAE')

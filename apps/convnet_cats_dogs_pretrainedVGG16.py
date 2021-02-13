@@ -3,15 +3,17 @@
 # No image augmentation is done!
 
 import os
+import time
+
 import numpy as np
 from keras import models, layers, optimizers
-from keras.preprocessing.image import ImageDataGenerator
 from keras.applications import VGG16
-from utils.plotting import plot_accuracy_loss
-import time
+from keras.preprocessing.image import ImageDataGenerator
 
 # To avoid an error (see the method)
 from utils.compatibility import compat_no_algo
+from utils.plotting import plot_accuracy_loss
+
 compat_no_algo()
 
 conv_base = VGG16(
@@ -27,7 +29,7 @@ train_dir = os.path.join(base_dir, 'train')
 validation_dir = os.path.join(base_dir, 'validate')
 test_dir = os.path.join(base_dir, 'test')
 
-dataGen = ImageDataGenerator(rescale=1./255)
+dataGen = ImageDataGenerator(rescale=1. / 255)
 batch_size = 20
 train_size = 2000
 valid_size = 1000
@@ -47,8 +49,8 @@ def extract_features(directory, sample_count, batch_sz):
     i = 0
     for inputs_batch, labels_batch in generator:
         feature_batch = conv_base.predict(inputs_batch)
-        features[i * batch_sz : (i+1) * batch_sz] = feature_batch
-        labels[i * batch_sz : (i+1) * batch_sz] = labels_batch
+        features[i * batch_sz: (i + 1) * batch_sz] = feature_batch
+        labels[i * batch_sz: (i + 1) * batch_sz] = labels_batch
         i += 1
         if i * batch_sz >= sample_count:
             break
@@ -103,8 +105,3 @@ Epoch 30/30
 100/100 [==============================] - 0s 2ms/step - loss: 0.0834 - acc: 0.9744 - val_loss: 0.2406 - val_acc: 0.9040
 It took 17.638522148132324 sec
 """
-
-
-
-
-

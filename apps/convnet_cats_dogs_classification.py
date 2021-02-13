@@ -1,16 +1,18 @@
 # Binary classification of images 'dogs' vs 'cats'
 # Uses convolution neural network (CNN) with augmentation
 
+import os
 import shutil
-from utils.files import imageDirStats
+import time
+
 from keras import models, layers, optimizers, regularizers
 from keras.preprocessing.image import ImageDataGenerator
-from utils.plotting import plot_accuracy_loss
-import time
-import os
 
 # To avoid an error (see the method)
 from utils.compatibility import compat_no_algo
+from utils.files import imageDirStats
+from utils.plotting import plot_accuracy_loss
+
 compat_no_algo()
 
 
@@ -68,30 +70,30 @@ testDirCats = make_dir(testDir, 'cats')
 # Copy over the files
 for animal in ['cat', 'dog']:
     # Training
-    fNames = ['{}.{}.jpg'.format(animal, i) for i in range(1, trainSz+1)]
+    fNames = ['{}.{}.jpg'.format(animal, i) for i in range(1, trainSz + 1)]
     for fName in fNames:
         src = os.path.join(orig_path, 'training_set', '{}s'.format(animal), fName)
         dest = os.path.join(path, 'train', '{}s'.format(animal), fName)
         shutil.copyfile(src, dest)
 
     # Validation
-    fNames = ['{}.{}.jpg'.format(animal, i) for i in range(trainSz+1, trainSz+valSz+1)]
+    fNames = ['{}.{}.jpg'.format(animal, i) for i in range(trainSz + 1, trainSz + valSz + 1)]
     for fName in fNames:
         src = os.path.join(orig_path, 'training_set', '{}s'.format(animal), fName)
         dest = os.path.join(path, 'validate', '{}s'.format(animal), fName)
         shutil.copyfile(src, dest)
 
     # Testing
-    fNames = ['{}.{}.jpg'.format(animal, i) for i in range(4001, 4001+testSz)]
+    fNames = ['{}.{}.jpg'.format(animal, i) for i in range(4001, 4001 + testSz)]
     for fName in fNames:
         src = os.path.join(orig_path, 'test_set', '{}s'.format(animal), fName)
         dest = os.path.join(path, 'test', '{}s'.format(animal), fName)
         shutil.copyfile(src, dest)
- 
+
 print(trainDirCats, len(os.listdir(trainDirCats)))
 print(trainDirDogs, len(os.listdir(trainDirDogs)))
 print(valDirCats, len(os.listdir(valDirCats)))
-print(valDirDogs, len(os.listdir(valDirDogs)))        
+print(valDirDogs, len(os.listdir(valDirDogs)))
 print(testDirCats, len(os.listdir(testDirCats)))
 print(testDirDogs, len(os.listdir(testDirDogs)))
 
@@ -108,14 +110,15 @@ model.add(layers.MaxPooling2D(2, 2))
 model.add(layers.Flatten())
 model.add(layers.Dense(512, activation='relu', kernel_regularizer=regularizers.l2(0.001)))
 model.add(layers.Dropout(0.5))
-model.add(layers.Dense(1, activation='sigmoid'))  # binary classification, a probability of being either a 'cat' or a 'dog'
+model.add(
+    layers.Dense(1, activation='sigmoid'))  # binary classification, a probability of being either a 'cat' or a 'dog'
 
 print(model.summary())
 model.compile(loss='binary_crossentropy', optimizer=optimizers.RMSprop(lr=1.e-4), metrics=['acc'])
 
 # Using image augmentation to increase sample set, and improve model accuracy
 trainDataGen = ImageDataGenerator(
-    rescale=1./255.,
+    rescale=1. / 255.,
     rotation_range=40,
     width_shift_range=0.2,
     height_shift_range=0.2,
@@ -123,7 +126,7 @@ trainDataGen = ImageDataGenerator(
     zoom_range=0.2,
     horizontal_flip=True,
 )
-testDataGen = ImageDataGenerator(rescale=1./255.)
+testDataGen = ImageDataGenerator(rescale=1. / 255.)
 
 trainGen = trainDataGen.flow_from_directory(trainDir, target_size=(150, 150), batch_size=20, class_mode='binary')
 # Do not augment validation data!!!

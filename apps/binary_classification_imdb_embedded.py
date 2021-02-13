@@ -3,14 +3,16 @@
 # Using compact embedded vectors to encode words
 
 import os
-import pandas as pd
-import numpy as np
 import time
-from keras.models import Sequential
+
+import numpy as np
+import pandas as pd
 from keras.layers import Embedding, Flatten, Dense, Dropout
-from utils.data_preprocessing import shuffle, embeddings_GloVe
+from keras.models import Sequential
 from keras.preprocessing.sequence import pad_sequences
 from keras.preprocessing.text import Tokenizer
+
+from utils.data_preprocessing import shuffle, embeddings_GloVe
 from utils.plotting import plot_accuracy_loss
 
 
@@ -47,7 +49,8 @@ print(labels.shape)
 tokenizer = Tokenizer(num_words=max_words)
 tokenizer.fit_on_texts(reviews)
 reviews = tokenizer.texts_to_sequences(reviews)
-reviews = pad_sequences(reviews, maxlen=maxlen, padding='post', truncating='post')  # Only first maxlen words in a review are processed
+reviews = pad_sequences(reviews, maxlen=maxlen, padding='post',
+                        truncating='post')  # Only first maxlen words in a review are processed
 
 # Shuffle data
 reviews, labels = shuffle(reviews, labels)
@@ -82,7 +85,7 @@ if use_pretrained_emb:
                 embed_matrix[i] = coeffs
 
 t1 = time.time()
-print('It took {} sec to load data'.format(t1-t0))
+print('It took {} sec to load data'.format(t1 - t0))
 
 # Build a model
 model = Sequential()
@@ -108,7 +111,7 @@ file_path = os.path.join(outputs_dir, 'imdb_embeddings.h5')
 model.save_weights(file_path)
 
 t2 = time.time()
-print('It took {} sec to train the model'.format(t2-t1))
+print('It took {} sec to train the model'.format(t2 - t1))
 
 plot_accuracy_loss(
     history.history['acc'],

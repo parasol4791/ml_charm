@@ -8,7 +8,7 @@ def smooth_curve(points, factor=0.9):
     for p in points:
         if smooth_points:
             prev = smooth_points[-1]
-            smooth_points.append(prev*factor + p*(1-factor))
+            smooth_points.append(prev * factor + p * (1 - factor))
         else:
             smooth_points.append(p)
     return smooth_points
@@ -43,15 +43,15 @@ def plot_the_loss_curve(epochs, rmse):
 
     plt.plot(epochs, rmse, label="Loss")
     plt.legend()
-    plt.ylim([rmse.min()*0.97, rmse.max()])
+    plt.ylim([rmse.min() * 0.97, rmse.max()])
     plt.show()
 
 
 def plot_accuracy_loss(
-    train_acc,
-    train_loss,
-    valid_acc,
-    valid_loss
+        train_acc,
+        train_loss,
+        valid_acc,
+        valid_loss
 ):
     """Plots 2 graphs - for trained/validation accuracy and loss"""
     epochs = range(1, len(train_acc) + 1)

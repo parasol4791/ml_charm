@@ -4,14 +4,16 @@
 # Joint training of custom classifier with a few top layers of conv base is done (fine-tuning).
 
 import os
-from keras import models, layers, optimizers
-from keras.preprocessing.image import ImageDataGenerator
-from keras.applications import VGG16
-from utils.plotting import plot_accuracy_loss
 import time
+
+from keras import models, layers, optimizers
+from keras.applications import VGG16
+from keras.preprocessing.image import ImageDataGenerator
 
 # To avoid an error (see the method)
 from utils.compatibility import compat_no_algo
+from utils.plotting import plot_accuracy_loss
+
 compat_no_algo()
 
 startTime = time.time()
@@ -25,7 +27,7 @@ test_dir = os.path.join(base_dir, 'test')
 
 # Use image augmentation to increase sample set, and improve model accuracy
 trainDataGen = ImageDataGenerator(
-    rescale=1./255.,
+    rescale=1. / 255.,
     rotation_range=40,
     width_shift_range=0.2,
     height_shift_range=0.2,
@@ -34,14 +36,15 @@ trainDataGen = ImageDataGenerator(
     horizontal_flip=True,
     fill_mode='nearest'
 )
-testDataGen = ImageDataGenerator(rescale=1./255.)
+testDataGen = ImageDataGenerator(rescale=1. / 255.)
 
 batch_sz = 10
 train_steps = 200
 valid_steps = 100
 trainGen = trainDataGen.flow_from_directory(train_dir, target_size=(150, 150), batch_size=batch_sz, class_mode='binary')
 # Do not augment validation data!!!
-valGen = testDataGen.flow_from_directory(validation_dir, target_size=(150, 150), batch_size=batch_sz, class_mode='binary')
+valGen = testDataGen.flow_from_directory(validation_dir, target_size=(150, 150), batch_size=batch_sz,
+                                         class_mode='binary')
 
 # Get convolution base from VGG16
 conv_base = VGG16(
@@ -66,6 +69,7 @@ def freezeConvBaseAll():
     # Only 2 Dense layers are trainable now, with weight matrix / bias vector for each, 4 trainable sets in total
     print('# trainable weights after freeze: {}'.format(len(model.trainable_weights)))
 
+
 def freezeConvBasePart():
     conv_base.trainable = True
     is_trainable = False
@@ -87,7 +91,8 @@ print(model.summary())
 
 model.compile(loss='binary_crossentropy', optimizer=optimizers.RMSprop(lr=1e-5), metrics=['acc'])
 
-history = model.fit(trainGen, epochs=40, steps_per_epoch=train_steps, validation_data=valGen, validation_steps=valid_steps)
+history = model.fit(trainGen, epochs=40, steps_per_epoch=train_steps, validation_data=valGen,
+                    validation_steps=valid_steps)
 outputs_dir = os.environ['OUTPUTS_DIR']
 model.save(os.path.join(outputs_dir, 'cats_n_dogs_small_fromVGG16_augment.h5'))
 print(history.history.keys())

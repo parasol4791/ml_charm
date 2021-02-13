@@ -1,12 +1,13 @@
+import time
+
 import pandas as pd
+
 from models.simple import build_model_linear_regression
 from utils.plotting import plot_the_model, plot_the_loss_curve
-import time
 
 
 def train_model(model, feature, label, nepochs, batch_size):
-    # Train the model by feeding it data.
-
+    """Train the model by feeding it data"""
     # Feed the feature values and the label values to the
     # model. The model will train for the specified number
     # of epochs, gradually learning how the feature values
@@ -50,7 +51,6 @@ trained_weight, trained_bias, epochs, rmse = train_model(my_model, my_feature,
 print('It took {} sec'.format(time.time() - startTime))
 plot_the_model(trained_weight, trained_bias, my_feature, my_label)
 plot_the_loss_curve(epochs, rmse)
-
 
 """
 CPU:

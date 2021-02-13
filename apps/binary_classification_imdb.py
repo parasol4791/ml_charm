@@ -2,22 +2,23 @@
 # Only first 10,000 most common words are used, the rest are discarded
 # Using one-hot encoding for words
 
-from keras.datasets import imdb
-from keras import models, layers, optimizers, losses, metrics
-import numpy as np
-import tensorflow as tf
-from utils.plotting import plot_accuracy_loss
-from utils.data_preprocessing import vectorize, decodeSequence
 import time
 
-NUM_WORDS = 10000
+import numpy as np
+import tensorflow as tf
+from keras import models, layers, optimizers, losses, metrics
+from keras.datasets import imdb
 
+from utils.data_preprocessing import vectorize, decodeSequence
+from utils.plotting import plot_accuracy_loss
+
+NUM_WORDS = 10000
 
 # To resolve an error while loading imdb dataset
 # np_load_old = np.load
 # np.load = lambda *a,**k: np_load_old(*a, allow_pickle=True, **k)
 
-tf.config.optimizer.set_jit(False) # Start with XLA enabled
+tf.config.optimizer.set_jit(False)  # Start with XLA enabled
 
 startTime = time.time()
 (train_data, train_labels), (test_data, test_labels) = imdb.load_data(num_words=NUM_WORDS)
@@ -31,7 +32,7 @@ print(decodeSequence(imdb, train_data[0]), train_labels[0])
 x_train = vectorize(train_data, NUM_WORDS)
 x_test = vectorize(test_data, NUM_WORDS)
 
-y_train = np.array(train_labels).astype('float32') 
+y_train = np.array(train_labels).astype('float32')
 y_test = np.array(test_labels).astype('float32')
 
 model = models.Sequential()
@@ -44,7 +45,7 @@ model.compile(
     optimizer=optimizers.RMSprop(lr=0.001),
     loss=losses.binary_crossentropy,
     metrics=[metrics.binary_accuracy]
-    )
+)
 
 # Validation on training set
 x_val = x_train[:10000]

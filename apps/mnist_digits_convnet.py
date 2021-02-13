@@ -1,20 +1,20 @@
-
 # Training a convolutional network model for recognizing hand written digits (0-9)
 
-from keras.datasets import mnist
-from keras import models, layers
-from keras.utils import to_categorical
-import matplotlib.pyplot as plt
 import time
 
+import matplotlib.pyplot as plt
+from keras import models, layers
+from keras.datasets import mnist
+from keras.utils import to_categorical
 
 # To avoid an error (see the method)
 from utils.compatibility import compat_no_algo
+
 compat_no_algo()
 
 
 def showDigit(digit, label):
-    '''Shows a representation of a single digit'''
+    """Shows a representation of a single digit"""
     plt.imshow(digit, cmap=plt.cm.binary)
     plt.xlabel(label)
     plt.show()
@@ -27,11 +27,11 @@ startTime = time.time()
 #    showDigit(train_images[i], train_labels[i])
 
 network = models.Sequential()
-network.add(layers.Conv2D(32, (3,3), activation='relu', input_shape=(28,28,1)))
-network.add(layers.MaxPooling2D(2,2))
-network.add(layers.Conv2D(64, (3,3), activation='relu'))
-network.add(layers.MaxPooling2D(2,2))
-network.add(layers.Conv2D(64, (3,3), activation='relu'))
+network.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=(28, 28, 1)))
+network.add(layers.MaxPooling2D(2, 2))
+network.add(layers.Conv2D(64, (3, 3), activation='relu'))
+network.add(layers.MaxPooling2D(2, 2))
+network.add(layers.Conv2D(64, (3, 3), activation='relu'))
 print(network.summary())
 
 network.add(layers.Flatten())
@@ -41,10 +41,10 @@ print(network.summary())
 
 network.compile(optimizer='rmsprop', loss='categorical_crossentropy', metrics=['accuracy'])
 
-train_images = train_images.reshape( (60000, 28, 28, 1) )
+train_images = train_images.reshape((60000, 28, 28, 1))
 train_images = train_images.astype('float32') / 255
 
-test_images = test_images.reshape( (10000, 28, 28, 1) )
+test_images = test_images.reshape((10000, 28, 28, 1))
 test_images = test_images.astype('float32') / 255
 
 # Converts each digit (0-9) into a binary array

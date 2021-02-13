@@ -1,4 +1,5 @@
 import os
+
 import numpy as np
 
 
@@ -17,9 +18,9 @@ def decodeSequence(dataset, seq):
     idx = dataset.get_word_index()
     rev_idx = {value: key for key, value in idx.items()}
     for i in seq:
-        if i-3 not in rev_idx:
+        if i - 3 not in rev_idx:
             print(i)
-    return [rev_idx.get(idx-3, '?') for idx in seq]
+    return [rev_idx.get(idx - 3, '?') for idx in seq]
 
 
 def shuffle(array1, array2):
@@ -41,7 +42,8 @@ def embeddings_GloVe(tokens='6B', dim=100):
     if tokens != '6B':
         raise ValueError('Only GloVe with 6B tokens is currently supported. Attempted {}'.format(tokens))
     if dim not in [50, 100, 200, 300]:
-        raise ValueError('Only embedding vectors with dimentions 50, 100, 200, 300 are supported. Attempted {}'.format(dim))
+        raise ValueError(
+            'Only embedding vectors with dimentions 50, 100, 200, 300 are supported. Attempted {}'.format(dim))
     data_dir = os.environ['DATASETS_DIR']
     glove_dir = os.path.join(data_dir, 'glove', 'glove.{}.{}d.txt'.format(tokens, dim))  # like, glove.6B.100d.txt
 

@@ -1,9 +1,11 @@
-import pandas as pd
+import time
+
 import numpy as np
+import pandas as pd
+import tensorflow as tf
+
 from models.simple import build_model_linear_regression
 from utils.plotting import plot_the_model, plot_the_loss_curve
-import tensorflow as tf
-import time
 
 
 def train_model(model, df, feature, label, nepochs, batch_sz):
@@ -53,7 +55,7 @@ startTime = time.time()
 # The following lines adjust the granularity of reporting. 
 pd.options.display.max_rows = 10
 pd.options.display.float_format = "{:.1f}".format
-tf.config.optimizer.set_jit(False) # Start with XLA enabled
+tf.config.optimizer.set_jit(False)  # Start with XLA enabled
 
 # Import the dataset.
 training_df = pd.read_csv(
