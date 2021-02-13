@@ -6,7 +6,7 @@ from keras.datasets import imdb
 from keras import models, layers, optimizers, losses, metrics
 import numpy as np
 import tensorflow as tf
-import matplotlib.pyplot as plt
+from utils.plotting import plot_accuracy_loss
 from utils.data_preprocessing import vectorize, decodeSequence
 import time
 
@@ -56,34 +56,14 @@ partial_y_train = y_train[10000:]
 # history = model.fit(partial_x_train, partial_y_train, epochs=10, batch_size=1000, validation_data=(x_val, y_val))
 history = model.fit(x_train, y_train, epochs=10, batch_size=1000, validation_data=(x_test, y_test))
 
-hDict = history.history
-print(hDict.keys())
-loss_values = hDict['loss']
-val_loss_values = hDict['val_loss']
-epochs = range(1, len(loss_values)+1)
-
 print('It took {} sec'.format(time.time() - startTime))
 
-plt.plot(epochs, loss_values, 'bo', label='Training loss')
-plt.plot(epochs, val_loss_values, 'b', label='Validation loss')
-plt.title('Training and Validation loss')
-plt.xlabel('Epochs')
-plt.ylabel('Loss')
-plt.legend()
-plt.show()
-
-plt.clf()
-
-acc_values = hDict['binary_accuracy']
-val_acc_values = hDict['val_binary_accuracy']
-
-plt.plot(epochs, acc_values, 'bo', label='Training accuracy')
-plt.plot(epochs, val_acc_values, 'b', label='Validation accuracy')
-plt.title('Training and Validation accuracy')
-plt.xlabel('Epochs')
-plt.ylabel('Accuracy')
-plt.legend()
-plt.show()
+plot_accuracy_loss(
+    history.history['binary_accuracy'],
+    history.history['loss'],
+    history.history['val_binary_accuracy'],
+    history.history['val_loss'],
+)
 
 """
 CPU:

@@ -4,7 +4,7 @@ import numpy as np
 from keras.datasets import reuters
 from keras.utils import to_categorical
 from keras import models, layers
-import matplotlib.pyplot as plt
+from utils.plotting import plot_accuracy_loss
 from utils.data_preprocessing import decodeSequence, vectorize
 import time
 
@@ -40,35 +40,16 @@ model.add(layers.Dense(46, activation='softmax'))
 
 model.compile(optimizer='rmsprop', loss='categorical_crossentropy', metrics=['accuracy'])
 
-hist = model.fit(x_train_part, y_train_part, epochs=10, batch_size=512, validation_data=(x_val,y_val))
-hDict = hist.history
-print(hDict.keys())
-loss = hDict['loss']
-val_loss = hDict['val_loss']
-acc = hDict['accuracy']
-val_acc = hDict['val_accuracy']
-epochs = range(1,len(loss)+1)
+history = model.fit(x_train_part, y_train_part, epochs=10, batch_size=512, validation_data=(x_val,y_val))
 
 print('It took {} sec'.format(time.time() - startTime))
 
-# Plot loss
-plt.plot(epochs, loss, 'bo', label='training loss')
-plt.plot(epochs, val_loss, 'b', label='validation loss')
-plt.title('Training/validation loss')
-plt.xlabel('Epochs')
-plt.ylabel('Loss')
-plt.legend()
-plt.show()
-
-# Plot accuracy
-plt.clf()
-plt.plot(epochs, acc, 'bo', label='training accuracy')
-plt.plot(epochs, val_acc, 'b', label='validation accuracy')
-plt.title('Training/validation accuracy')
-plt.xlabel('Epochs')
-plt.ylabel('Accuracy')
-plt.legend()
-plt.show()
+plot_accuracy_loss(
+    history.history['accuracy'],
+    history.history['loss'],
+    history.history['val_accuracy'],
+    history.history['val_loss'],
+)
 
 # Predict test categories
 matches = 0

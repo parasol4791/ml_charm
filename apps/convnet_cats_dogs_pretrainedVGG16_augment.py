@@ -7,7 +7,7 @@ import os
 from keras import models, layers, optimizers
 from keras.preprocessing.image import ImageDataGenerator
 from keras.applications import VGG16
-import matplotlib.pyplot as plt
+from utils.plotting import plot_accuracy_loss
 import time
 
 # To avoid an error (see the method)
@@ -87,30 +87,19 @@ print(model.summary())
 
 model.compile(loss='binary_crossentropy', optimizer=optimizers.RMSprop(lr=1e-5), metrics=['acc'])
 
-hist = model.fit(trainGen, epochs=40, steps_per_epoch=train_steps, validation_data=valGen, validation_steps=valid_steps)
+history = model.fit(trainGen, epochs=40, steps_per_epoch=train_steps, validation_data=valGen, validation_steps=valid_steps)
 outputs_dir = os.environ['OUTPUTS_DIR']
 model.save(os.path.join(outputs_dir, 'cats_n_dogs_small_fromVGG16_augment.h5'))
-print(hist.history.keys())
+print(history.history.keys())
 print('It took {} sec'.format(time.time() - startTime))
 
 # Plot accuracy and loss
-acc = hist.history['acc']
-loss = hist.history['loss']
-valAcc = hist.history['val_acc']
-valLoss = hist.history['val_loss']
-epochs = range(1, len(acc)+1)
-
-plt.plot(epochs, acc, 'bo', label='Training acc')
-plt.plot(epochs, valAcc, 'b', label='Validation acc')
-plt.title('Training & validation accuracy')
-plt.legend()
-
-plt.figure()
-plt.plot(epochs, loss, 'bo', label='Training loss')
-plt.plot(epochs, valLoss, 'b', label='Validation loss')
-plt.title('Training & validation loss')
-plt.legend()
-plt.show()
+plot_accuracy_loss(
+    history.history['acc'],
+    history.history['loss'],
+    history.history['val_acc'],
+    history.history['val_loss'],
+)
 
 # Results:
 """

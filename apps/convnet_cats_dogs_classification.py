@@ -5,7 +5,7 @@ import shutil
 from utils.files import imageDirStats
 from keras import models, layers, optimizers, regularizers
 from keras.preprocessing.image import ImageDataGenerator
-import matplotlib.pyplot as plt
+from utils.plotting import plot_accuracy_loss
 import time
 import os
 
@@ -134,30 +134,18 @@ valGen = testDataGen.flow_from_directory(valDir, target_size=(150, 150), batch_s
 #    print('Labels shape: ', labelBatch.shape)
 #    break
 
-hist = model.fit(trainGen, epochs=100, steps_per_epoch=100, validation_data=valGen, validation_steps=50)
+history = model.fit(trainGen, epochs=100, steps_per_epoch=100, validation_data=valGen, validation_steps=50)
 outputs_dir = os.environ['OUTPUTS_DIR']
 model.save(os.path.join(outputs_dir, 'cats_n_dogs_small.h5'))
-print(hist.history.keys())
+print(history.history.keys())
 print('It took {} sec'.format(time.time() - startTime))
 
-
-acc = hist.history['acc']
-loss = hist.history['loss']
-valAcc = hist.history['val_acc']
-valLoss = hist.history['val_loss']
-epochs = range(1, len(acc)+1)
-
-plt.plot(epochs, acc, 'bo', label='Training acc')
-plt.plot(epochs, valAcc, 'b', label='Validation acc')
-plt.title('Training & validation accuracy')
-plt.legend()
-
-plt.figure()
-plt.plot(epochs, loss, 'bo', label='Training loss')
-plt.plot(epochs, valLoss, 'b', label='Validation loss')
-plt.title('Training & validation loss')
-plt.legend()
-plt.show()
+plot_accuracy_loss(
+    history.history['acc'],
+    history.history['loss'],
+    history.history['val_acc'],
+    history.history['val_loss'],
+)
 
 """
 CPU (laptop, 4 cores):

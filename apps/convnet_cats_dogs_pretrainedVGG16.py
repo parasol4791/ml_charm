@@ -7,7 +7,7 @@ import numpy as np
 from keras import models, layers, optimizers
 from keras.preprocessing.image import ImageDataGenerator
 from keras.applications import VGG16
-import matplotlib.pyplot as plt
+from utils.plotting import plot_accuracy_loss
 import time
 
 # To avoid an error (see the method)
@@ -89,23 +89,12 @@ history = model.fit(train_features, train_labels,
 print('It took {} sec'.format(time.time() - startTime))
 
 # Plotting accuracy/loss functions
-acc = history.history['acc']
-loss = history.history['loss']
-val_acc = history.history['val_acc']
-val_loss = history.history['val_loss']
-
-epochs = range(1, len(acc)+1)
-plt.plot(epochs, acc, 'bo', label='Training accuracy')
-plt.plot(epochs, val_acc, 'b', label='Validation accuracy')
-plt.title('Training & validation accuracy')
-plt.legend()
-
-plt.figure()
-plt.plot(epochs, loss, 'bo', label='Training loss')
-plt.plot(epochs, val_loss, 'b', label='Validation loss')
-plt.title('Training & validation loss')
-plt.legend()
-plt.show()
+plot_accuracy_loss(
+    history.history['acc'],
+    history.history['loss'],
+    history.history['val_acc'],
+    history.history['val_loss'],
+)
 
 # Results
 """
