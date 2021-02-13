@@ -8,7 +8,7 @@ def smooth_curve(points, factor=0.9):
     for p in points:
         if smooth_points:
             prev = smooth_points[-1]
-            smooth_points.append( prev*factor + p*(1-factor) )
+            smooth_points.append(prev*factor + p*(1-factor))
         else:
             smooth_points.append(p)
     return smooth_points
@@ -36,8 +36,7 @@ def plot_the_model(trained_weight, trained_bias, feature, label):
 
 
 def plot_the_loss_curve(epochs, rmse):
-    #Plot the loss curve, which shows loss vs. epoch.
-
+    """Plot the loss curve, which shows loss vs. epoch"""
     plt.figure()
     plt.xlabel("Epoch")
     plt.ylabel("Root Mean Squared Error")
@@ -52,7 +51,8 @@ def plot_accuracy_loss(
     train_acc,
     train_loss,
     valid_acc,
-    valid_loss):
+    valid_loss
+):
     """Plots 2 graphs - for trained/validation accuracy and loss"""
     epochs = range(1, len(train_acc) + 1)
     plt.plot(epochs, train_acc, 'bo', label='Training acc')

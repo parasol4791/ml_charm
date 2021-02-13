@@ -5,7 +5,6 @@
 import os
 import pandas as pd
 import numpy as np
-import logging
 import time
 from keras.models import Sequential
 from keras.layers import Embedding, Flatten, Dense, Dropout
@@ -22,8 +21,7 @@ def convert_zero_one(val):
     elif val == 'positive':
         return 1
     else:
-        logging.error('Unsupported sentiment value {}'.format(val))
-        raise
+        raise ValueError('Unsupported sentiment value {}'.format(val))
 
 
 # Training params
@@ -70,13 +68,13 @@ print('Test: ', x_test.shape)
 word_index = tokenizer.word_index
 print('Found {} unique tokens'.format(len(word_index)))
 
+embed_matrix = np.zeros((max_words, embeddings_dim))
 if use_pretrained_emb:
     word_vectors = embeddings_GloVe(dim=embeddings_dim)  # 6B tokens
     print(len(word_vectors))
 
     # Build an embeddings matrix (word indes : embedding coefficients)
     word_index = tokenizer.word_index
-    embed_matrix = np.zeros((max_words, embeddings_dim))
     for word, i in word_index.items():
         if i < max_words:
             coeffs = word_vectors.get(word)  # attemt getting pretrained embedding coefficients for a word
@@ -94,7 +92,7 @@ model.add(Flatten())
 model.add(Dense(32, activation='relu'))
 model.add(Dropout(0.5))
 model.add(Dense(1, activation='sigmoid'))
-logging.info(model.summary())
+print(model.summary())
 
 # Load pretrained embedded word vectors to Embedded layer (the first layer in the model)
 if use_pretrained_emb:
@@ -103,6 +101,11 @@ if use_pretrained_emb:
 
 model.compile(optimizer='rmsprop', loss='binary_crossentropy', metrics=['acc'])
 history = model.fit(x_train, y_train, epochs=10, batch_size=32, validation_data=(x_valid, y_valid))
+
+# Cache the trained model
+outputs_dir = os.environ['OUTPUTS_DIR']
+file_path = os.path.join(outputs_dir, 'imdb_embeddings.h5')
+model.save_weights(file_path)
 
 t2 = time.time()
 print('It took {} sec to train the model'.format(t2-t1))
@@ -113,6 +116,18 @@ plot_accuracy_loss(
     history.history['val_acc'],
     history.history['val_loss'],
 )
+
+# Evaluation on test data
+test_loss, test_acc = model.evaluate(x_test, y_test, batch_size=32)
+print('Test loss: {}, acc: {}'.format(test_loss, test_acc))
+
+# Predicting the first 10 outcomes (in terms of probabilities)
+n_predict = 20
+actual = y_train[:n_predict]
+predictions = model.predict(x_test[:n_predict])
+print('Label    Precicted')
+for label, pred in zip(actual, predictions):
+    print('{}    {}'.format(label, pred))
 
 # Results
 """
@@ -146,5 +161,3 @@ Epoch 10/10
 625/625 [==============================] - 6s 10ms/step - loss: 0.0372 - acc: 0.9877 - val_loss: 0.6951 - val_acc: 0.8711
 It took 64.8416862487793 sec to train the model
 """
-
-

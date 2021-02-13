@@ -1,24 +1,23 @@
 import os
 import numpy as np
-import logging
 
 
 def vectorize(seqs, dimension):
-    '''Vectorize integer sequences, and One-hot encode them.
+    """Vectorize integer sequences, and One-hot encode them.
        Seqs is an array of lists, dimension is typically a number of categories
-       in an individual sequence (number of words in classification problem)'''
-    res = np.zeros( (len(seqs), dimension) )
+       in an individual sequence (number of words in classification problem)"""
+    res = np.zeros((len(seqs), dimension))
     for i, seq in enumerate(seqs):
-        res[i,seq] = 1
+        res[i, seq] = 1
     return res
 
 
 def decodeSequence(dataset, seq):
-    '''Decodes numerical sequence from a dataset'''
+    """Decodes numerical sequence from a dataset"""
     idx = dataset.get_word_index()
-    rev_idx = { value : key for key, value in idx.items() }
+    rev_idx = {value: key for key, value in idx.items()}
     for i in seq:
-        if not i-3 in rev_idx:
+        if i-3 not in rev_idx:
             print(i)
     return [rev_idx.get(idx-3, '?') for idx in seq]
 
@@ -41,7 +40,7 @@ def embeddings_GloVe(tokens='6B', dim=100):
      6B tokens, 400k vocabulary"""
     if tokens != '6B':
         raise ValueError('Only GloVe with 6B tokens is currently supported. Attempted {}'.format(tokens))
-    if dim not in [50,100,200,300]:
+    if dim not in [50, 100, 200, 300]:
         raise ValueError('Only embedding vectors with dimentions 50, 100, 200, 300 are supported. Attempted {}'.format(dim))
     data_dir = os.environ['DATASETS_DIR']
     glove_dir = os.path.join(data_dir, 'glove', 'glove.{}.{}d.txt'.format(tokens, dim))  # like, glove.6B.100d.txt
@@ -54,6 +53,6 @@ def embeddings_GloVe(tokens='6B', dim=100):
             word = vals[0]
             coeffs = np.asarray(vals[1:], dtype='float32')
             embed_idx[word] = coeffs  # map of word : coefficients
-        logging.info('Found {} word vectors'.format(len(embed_idx)))
+        print('Found {} word vectors'.format(len(embed_idx)))
 
     return embed_idx
