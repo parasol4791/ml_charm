@@ -1,5 +1,6 @@
 # Training network to classify movie reviews into positive (1) and negative (0)
 # Only first 10,000 most common words are used, the rest are discarded
+# Using one-hot encoding for words
 
 from keras.datasets import imdb
 from keras import models, layers, optimizers, losses, metrics
