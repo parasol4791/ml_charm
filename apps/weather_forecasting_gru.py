@@ -145,7 +145,7 @@ print('Base-line Dense model took {} sec'.format(t2 - t1))
 compat_lstm_cancel_error()
 
 model = models.Sequential()
-model.add(layers.GRU(32, input_shape=(None, data.shape[-1]),))
+model.add(layers.GRU(16, input_shape=(None, data.shape[-1]),))
 # Stacked RNN with dropouts - takes much longer, no significant improvement in validation accuracy
 # model.add(layers.GRU(32, input_shape=(None, data.shape[-1]), activation='relu', dropout=0.1, recurrent_dropout=0.5, return_sequences=True))
 # model.add(layers.GRU(64, activation='relu', dropout=0.1, recurrent_dropout=0.5), )
@@ -159,6 +159,9 @@ history = model.fit(train_gen,
                     validation_data=val_gen,
                     validation_steps=200
                     )
+
+t3 = time.time()
+print('It took {} sec to run GRU model'.format(t3 - t2))
 
 # Plot accuracy and loss
 plot_loss(
@@ -189,4 +192,5 @@ Base-line Dense model took 185.6866159439087 sec
 Recurrent GRU model (dropouts and stacking recurrent layers do not help, just sharply increases computation time)
 Epoch 15/20
 200/200 [==============================] - 2s 11ms/step - loss: 0.2761 - val_loss: 0.2747
+It took 45.50749492645264 sec to run GRU model
 """

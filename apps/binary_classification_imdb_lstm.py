@@ -36,7 +36,9 @@ y_test = np.array(test_labels).astype('float32')
 
 model = models.Sequential()
 model.add(layers.Embedding(NUM_WORDS, 32))
-model.add(layers.LSTM(32, dropout=0.5))
+# model.add(layers.LSTM(32, dropout=0.5))
+model.add(layers.Bidirectional(layers.LSTM(16, dropout=0.5, return_sequences=True)))
+model.add(layers.LSTM(2, dropout=0.2))
 model.add(layers.Dense(1, activation='sigmoid'))
 print(model.summary())
 
@@ -46,7 +48,7 @@ model.compile(
     metrics=['acc']
 )
 
-history = model.fit(x_train, y_train, epochs=3, batch_size=128, validation_data=(x_test, y_test))
+history = model.fit(x_train, y_train, epochs=20, batch_size=128, validation_data=(x_test, y_test))
 
 print('It took {} sec'.format(time.time() - startTime))
 
@@ -63,4 +65,9 @@ GPU:
 Epoch 3/3
 196/196 [==============================] - 9s 44ms/step - loss: 0.2370 - acc: 0.9118 - val_loss: 0.2825 - val_acc: 0.8821
 It took 32.71308493614197 sec
+"""
+"""
+Bidirectional LSTM:
+Epoch 4/20
+196/196 [==============================] - 23s 116ms/step - loss: 0.2013 - acc: 0.9316 - val_loss: 0.2845 - val_acc: 0.8894
 """
