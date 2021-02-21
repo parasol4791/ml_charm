@@ -47,13 +47,12 @@ def plot_the_loss_curve(epochs, rmse):
     plt.show()
 
 
-def plot_accuracy_loss(
+def plot_accuracy(
         train_acc,
-        train_loss,
         valid_acc,
-        valid_loss
+        show=True
 ):
-    """Plots 2 graphs - for trained/validation accuracy and loss"""
+    """Plots trained/validation accuracy"""
     epochs = range(1, len(train_acc) + 1)
     plt.plot(epochs, train_acc, 'bo', label='Training acc')
     plt.plot(epochs, valid_acc, 'b', label='Validation acc')
@@ -61,12 +60,35 @@ def plot_accuracy_loss(
     plt.xlabel('Epochs')
     plt.ylabel('Accuracy')
     plt.legend()
+    if show:
+        plt.show()
 
-    plt.figure()
+
+def plot_loss(
+        train_loss,
+        valid_loss,
+        show=True
+):
+    """Plots trained/validation loss"""
+    epochs = range(1, len(train_loss) + 1)
     plt.plot(epochs, train_loss, 'bo', label='Training loss')
     plt.plot(epochs, valid_loss, 'b', label='Validation loss')
     plt.title('Training & validation loss')
     plt.xlabel('Epochs')
     plt.ylabel('Loss')
     plt.legend()
-    plt.show()
+    if show:
+        plt.show()
+
+
+def plot_accuracy_loss(
+        train_acc,
+        train_loss,
+        valid_acc,
+        valid_loss
+):
+    """Plots 2 graphs - for trained/validation accuracy and loss"""
+    plot_accuracy(train_acc, valid_acc, show=False)
+    plt.figure()
+    plot_loss(train_loss, valid_loss)
+
