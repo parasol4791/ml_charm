@@ -108,13 +108,12 @@ model.add(layers.MaxPooling2D(2, 2))
 model.add(layers.Conv2D(128, (3, 3), activation='relu'))
 model.add(layers.MaxPooling2D(2, 2))
 model.add(layers.Flatten())
-model.add(layers.Dense(512, activation='relu', kernel_regularizer=regularizers.l2(0.001)))
-model.add(layers.Dropout(0.5))
-model.add(
-    layers.Dense(1, activation='sigmoid'))  # binary classification, a probability of being either a 'cat' or a 'dog'
+model.add(layers.Dense(512, activation='relu', kernel_regularizer=regularizers.l2(0.0003)))
+#model.add(layers.Dropout(0.5))
+model.add(layers.Dense(1, activation='sigmoid'))  # binary classification, a probability of being either a 'cat' or a 'dog'
 
 print(model.summary())
-model.compile(loss='binary_crossentropy', optimizer=optimizers.RMSprop(lr=1.e-4), metrics=['acc'])
+model.compile(loss='binary_crossentropy', optimizer=optimizers.RMSprop(lr=4.e-4), metrics=['acc'])
 
 # Using image augmentation to increase sample set, and improve model accuracy
 trainDataGen = ImageDataGenerator(
@@ -128,7 +127,7 @@ trainDataGen = ImageDataGenerator(
 )
 testDataGen = ImageDataGenerator(rescale=1. / 255.)
 
-trainGen = trainDataGen.flow_from_directory(trainDir, target_size=(150, 150), batch_size=20, class_mode='binary')
+trainGen = trainDataGen.flow_from_directory(trainDir, target_size=(150, 150), batch_size=100, class_mode='binary')
 # Do not augment validation data!!!
 valGen = testDataGen.flow_from_directory(valDir, target_size=(150, 150), batch_size=20, class_mode='binary')
 
@@ -137,7 +136,7 @@ valGen = testDataGen.flow_from_directory(valDir, target_size=(150, 150), batch_s
 #    print('Labels shape: ', labelBatch.shape)
 #    break
 
-history = model.fit(trainGen, epochs=100, steps_per_epoch=100, validation_data=valGen, validation_steps=50)
+history = model.fit(trainGen, epochs=100, steps_per_epoch=20, validation_data=valGen, validation_steps=50)
 outputs_dir = os.environ['OUTPUTS_DIR']
 model.save(os.path.join(outputs_dir, 'cats_n_dogs_small.h5'))
 print(history.history.keys())
