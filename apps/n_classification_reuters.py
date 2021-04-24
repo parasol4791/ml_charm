@@ -39,6 +39,7 @@ model = models.Sequential()
 model.add(layers.Dense(64, activation='relu', input_shape=(NUM_WORDS,)))
 model.add(layers.Dense(64, activation='relu'))
 model.add(layers.Dense(46, activation='softmax'))
+model.summary()
 
 model.compile(optimizer='rmsprop', loss='categorical_crossentropy', metrics=['accuracy'])
 

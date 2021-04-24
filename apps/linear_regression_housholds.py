@@ -90,7 +90,7 @@ print(training_df.corr())
 
 # The following variables are the hyperparameters.
 learning_rate = 0.05
-epochs = 30
+epochs = 10
 batch_size = 30
 
 # Specify the feature and the label.
