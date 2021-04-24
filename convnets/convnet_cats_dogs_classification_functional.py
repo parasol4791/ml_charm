@@ -5,7 +5,7 @@ import os
 import shutil
 import time
 
-from keras import models, layers, optimizers, regularizers
+from keras import models, layers, optimizers, regularizers, Input, Model
 from keras.preprocessing.image import ImageDataGenerator
 
 # To avoid an error (see the method)
@@ -98,19 +98,19 @@ print(testDirCats, len(os.listdir(testDirCats)))
 print(testDirDogs, len(os.listdir(testDirDogs)))
 
 # Build a model
-model = models.Sequential()
-model.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=(150, 150, 3)))
-model.add(layers.MaxPooling2D(2, 2))
-model.add(layers.Conv2D(64, (3, 3), activation='relu'))
-model.add(layers.MaxPooling2D(2, 2))
-model.add(layers.Conv2D(128, (3, 3), activation='relu'))
-model.add(layers.MaxPooling2D(2, 2))
-model.add(layers.Conv2D(128, (3, 3), activation='relu'))
-model.add(layers.MaxPooling2D(2, 2))
-model.add(layers.Flatten())
-model.add(layers.Dense(512, activation='relu', kernel_regularizer=regularizers.l2(0.0003)))
-#model.add(layers.Dropout(0.5))
-model.add(layers.Dense(2, activation='softmax'))  # categorical classification, a probability of being either a 'cat' or a 'dog'
+input_tensor = Input(shape=(150, 150, 3))
+x = layers.Conv2D(32, (3, 3), activation='relu')(input_tensor)
+x = layers.MaxPooling2D(2, 2)(x)
+x = layers.Conv2D(64, (3, 3), activation='relu')(x)
+x = layers.MaxPooling2D(2, 2)(x)
+x = layers.Conv2D(128, (3, 3), activation='relu')(x)
+x = layers.MaxPooling2D(2, 2)(x)
+x = layers.Conv2D(128, (3, 3), activation='relu')(x)
+x = layers.MaxPooling2D(2, 2)(x)
+x = layers.Flatten()(x)
+x = layers.Dense(512, activation='relu', kernel_regularizer=regularizers.l2(0.0003))(x)
+output_tensor = layers.Dense(2, activation='softmax')(x)
+model = Model(input_tensor, output_tensor)
 
 print(model.summary())
 model.compile(loss='binary_crossentropy', optimizer=optimizers.RMSprop(lr=4.e-4), metrics=['acc'])
@@ -182,4 +182,11 @@ Epoch 149/150
 100/100 [==============================] - 7s 69ms/step - loss: 0.3521 - acc: 0.8424 - val_loss: 0.4032 - val_acc: 0.8290
 dict_keys(['loss', 'acc', 'val_loss', 'val_acc'])
 It took 1031.9605205059052 sec
+"""
+
+"""
+With functional interface. 100 epochs, batch_size=20 (100 caused Out of memory error)
+Epoch 95/100
+100/100 [==============================] - 7s 71ms/step - loss: 0.3126 - acc: 0.8823 - val_loss: 0.3409 - val_acc: 0.8630
+It took 704.6733331680298 sec
 """
