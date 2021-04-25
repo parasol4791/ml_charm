@@ -98,7 +98,8 @@ print(testDirCats, len(os.listdir(testDirCats)))
 print(testDirDogs, len(os.listdir(testDirDogs)))
 
 # Build a model
-input_tensor = Input(shape=(150, 150, 3))
+isize = 150
+input_tensor = Input(shape=(isize, isize, 3))
 x = layers.Conv2D(32, (3, 3), activation='relu')(input_tensor)
 x = layers.MaxPooling2D(2, 2)(x)
 x = layers.Conv2D(64, (3, 3), activation='relu')(x)
@@ -111,9 +112,9 @@ x = layers.Flatten()(x)
 x = layers.Dense(512, activation='relu', kernel_regularizer=regularizers.l2(0.0003))(x)
 output_tensor = layers.Dense(2, activation='softmax')(x)
 model = Model(input_tensor, output_tensor)
+model.compile(loss='binary_crossentropy', optimizer=optimizers.RMSprop(lr=6.e-4), metrics=['acc'])
 
 print(model.summary())
-model.compile(loss='binary_crossentropy', optimizer=optimizers.RMSprop(lr=4.e-4), metrics=['acc'])
 
 # Using image augmentation to increase sample set, and improve model accuracy
 trainDataGen = ImageDataGenerator(
@@ -127,16 +128,16 @@ trainDataGen = ImageDataGenerator(
 )
 testDataGen = ImageDataGenerator(rescale=1. / 255.)
 
-trainGen = trainDataGen.flow_from_directory(trainDir, target_size=(150, 150), batch_size=20, class_mode='categorical')
+trainGen = trainDataGen.flow_from_directory(trainDir, target_size=(isize, isize), batch_size=20, class_mode='categorical')
 # Do not augment validation data!!!
-valGen = testDataGen.flow_from_directory(valDir, target_size=(150, 150), batch_size=20, class_mode='categorical')
+valGen = testDataGen.flow_from_directory(valDir, target_size=(isize, isize), batch_size=20, class_mode='categorical')
 
 # for dataBatch, labelBatch in trainGen:
 #    print('Data batch shape: ', dataBatch.shape)
 #    print('Labels shape: ', labelBatch.shape)
 #    break
 
-history = model.fit(trainGen, epochs=100, steps_per_epoch=100, validation_data=valGen, validation_steps=50)
+history = model.fit(trainGen, epochs=400, steps_per_epoch=100, validation_data=valGen, validation_steps=50)
 outputs_dir = os.environ['OUTPUTS_DIR']
 model.save(os.path.join(outputs_dir, 'cats_n_dogs_small.h5'))
 print(history.history.keys())
@@ -189,4 +190,14 @@ With functional interface. 100 epochs, batch_size=20 (100 caused Out of memory e
 Epoch 95/100
 100/100 [==============================] - 7s 71ms/step - loss: 0.3126 - acc: 0.8823 - val_loss: 0.3409 - val_acc: 0.8630
 It took 704.6733331680298 sec
+"""
+
+"""
+Function API. Longer training
+Epoch 182/400
+100/100 [==============================] - 7s 74ms/step - loss: 0.2577 - acc: 0.9119 - val_loss: 0.3989 - val_acc: 0.8800
+Epoch 239/400
+100/100 [==============================] - 7s 74ms/step - loss: 0.2175 - acc: 0.9205 - val_loss: 0.3303 - val_acc: 0.8940
+Epoch 378/400
+100/100 [==============================] - 8s 78ms/step - loss: 0.1741 - acc: 0.9477 - val_loss: 0.5243 - val_acc: 0.8940
 """
