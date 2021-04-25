@@ -109,10 +109,11 @@ x = layers.MaxPooling2D(2, 2)(x)
 x = layers.Conv2D(128, (3, 3), activation='relu')(x)
 x = layers.MaxPooling2D(2, 2)(x)
 x = layers.Flatten()(x)
-x = layers.Dense(512, activation='relu', kernel_regularizer=regularizers.l2(0.0003))(x)
+x = layers.Dense(256, activation='relu', kernel_regularizer=regularizers.l2(0.0003))(x)
+x = layers.Dropout(0.4)(x)
 output_tensor = layers.Dense(2, activation='softmax')(x)
 model = Model(input_tensor, output_tensor)
-model.compile(loss='binary_crossentropy', optimizer=optimizers.RMSprop(lr=6.e-4), metrics=['acc'])
+model.compile(loss='binary_crossentropy', optimizer=optimizers.RMSprop(lr=8.e-4), metrics=['acc'])
 
 print(model.summary())
 
@@ -200,4 +201,14 @@ Epoch 239/400
 100/100 [==============================] - 7s 74ms/step - loss: 0.2175 - acc: 0.9205 - val_loss: 0.3303 - val_acc: 0.8940
 Epoch 378/400
 100/100 [==============================] - 8s 78ms/step - loss: 0.1741 - acc: 0.9477 - val_loss: 0.5243 - val_acc: 0.8940
+"""
+
+"""
+Functional API, long training. Reduced model parameters, Dropouts
+Epoch 238/400
+100/100 [==============================] - 7s 74ms/step - loss: 0.2527 - acc: 0.9096 - val_loss: 0.3609 - val_acc: 0.8980
+Epoch 259/400
+100/100 [==============================] - 8s 75ms/step - loss: 0.2555 - acc: 0.9037 - val_loss: 0.2867 - val_acc: 0.9010
+Epoch 339/400
+100/100 [==============================] - 7s 72ms/step - loss: 0.3015 - acc: 0.8859 - val_loss: 0.3161 - val_acc: 0.9040
 """
