@@ -6,7 +6,7 @@
 import os
 import time
 
-from keras import models, layers, optimizers
+from keras import models, layers, optimizers, regularizers
 from keras.applications import VGG16
 from keras.preprocessing.image import ImageDataGenerator
 
@@ -53,16 +53,18 @@ conv_base = VGG16(
     input_shape=(150, 150, 3)
 )
 
-# Build a model using VGG16 conv base, plus a custom classifier
-model = models.Sequential()
-model.add(conv_base)
-model.add(layers.Flatten())
-model.add(layers.Dense(256, activation='relu'))
-model.add(layers.Dropout(0.5))
-model.add(layers.Dense(1, activation='sigmoid'))
 
+def buildModel():
+    # Build a model using VGG16 conv base, plus a custom classifier
+    model = models.Sequential()
+    model.add(conv_base)
+    model.add(layers.Flatten())
+    model.add(layers.Dense(256, activation='relu', kernel_regularizer=regularizers.l2(0.001)))
+    model.add(layers.Dropout(0.5))
+    model.add(layers.Dense(1, activation='sigmoid'))
+    return model
 
-def freezeConvBaseAll():
+def freezeConvBaseAll(model):
     """ Freeze all layers of conv base of VGG16 model, to preserve them, and train only custom classifier """
     print('# trainable weights before freeze: {}'.format(len(model.trainable_weights)))
     conv_base.trainable = False
@@ -74,25 +76,25 @@ def freezeConvBasePart():
     conv_base.trainable = True
     is_trainable = False
     for layer in conv_base.layers:
-        if layer.name == 'block5_conv1':
+        if layer.name == 'block4_conv1':
             is_trainable = True
         layer.trainable = is_trainable
 
 
-# First, freeze all conv base, train custom classifier.
+model = buildModel()
+# First pass, freeze all conv base, train custom classifier.
 # Then unfreeze a few top layers of conv base, and fine-tune (jointly train with the classifier)
-freezeBaseAll = False
+freezeBaseAll = False  # TODO: change to False after classifier is trained and re-run
 if freezeBaseAll:
-    freezeConvBaseAll()
+    freezeConvBaseAll(model)
 else:
     freezeConvBasePart()
 
 print(model.summary())
 
-model.compile(loss='binary_crossentropy', optimizer=optimizers.RMSprop(lr=1e-5), metrics=['acc'])
+model.compile(loss='binary_crossentropy', optimizer=optimizers.RMSprop(lr=3e-5), metrics=['acc'])
 
-history = model.fit(trainGen, epochs=40, steps_per_epoch=train_steps, validation_data=valGen,
-                    validation_steps=valid_steps)
+history = model.fit(trainGen, epochs=200, steps_per_epoch=train_steps, validation_data=valGen, validation_steps=valid_steps)
 outputs_dir = os.environ['OUTPUTS_DIR']
 model.save(os.path.join(outputs_dir, 'cats_n_dogs_small_fromVGG16_augment.h5'))
 print(history.history.keys())
@@ -117,4 +119,19 @@ Fine-turning (joint training with the top conv base layers)
 Epoch 29/30
 100/100 [==============================] - 7s 71ms/step - loss: 0.1027 - acc: 0.9669 - val_loss: 0.3053 - val_acc: 0.9420
 It took 216.03741216659546 sec
+"""
+
+"""
+ - training custom classifier on top of VGG16 conv base. With regularization
+Epoch 26/40
+200/200 [==============================] - 8s 38ms/step - loss: 0.4907 - acc: 0.8628 - val_loss: 0.4114 - val_acc: 0.9060
+It took 305.7072615623474 sec
+"""
+"""
+Fine-tuning with the top 4 & 5 layers (15+M trainable params). 
+Only about 20 epochs give good results. Further training degrades performance!!!
+Epoch 11/200
+200/200 [==============================] - 8s 38ms/step - loss: 0.2703 - acc: 0.9501 - val_loss: 0.2423 - val_acc: 0.9630
+poch 18/200
+200/200 [==============================] - 8s 39ms/step - loss: 0.1887 - acc: 0.9485 - val_loss: 0.1971 - val_acc: 0.9660
 """
