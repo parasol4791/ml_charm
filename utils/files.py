@@ -4,6 +4,15 @@ import sys
 from PIL import Image
 
 
+def make_dir(path1, path2):
+    """Concatenates path1 & path2 into a new dir.
+       Created the dir, if it does not extis"""
+    new_dir = os.path.join(path1, path2)
+    if not os.path.exists(new_dir):
+        os.mkdir(new_dir)
+    return new_dir
+
+
 def imageDirStats(directory):
     """Returns a dictionary for files in a directory with:
     nImages - total number of images,

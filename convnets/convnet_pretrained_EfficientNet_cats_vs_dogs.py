@@ -4,7 +4,7 @@
 import os
 import time
 import numpy as np
-import tensorflow.compat.v2 as tf
+import tensorflow as tf
 import tensorflow_datasets as tfds
 from tensorflow.keras.layers.experimental import preprocessing
 from tensorflow.keras.models import Sequential
@@ -13,7 +13,7 @@ from tensorflow.keras.applications import EfficientNetB4
 import matplotlib.pyplot as plt
 from utils.plotting import plot_accuracy_loss
 from utils.compatibility import compat_no_algo
-from utils.tf_dataset import skipFiles
+from utils.tf_dataset import buildSplitStrings, labelToText, getFileName, getNumClasses, findMisclassifiedImages
 
 compat_no_algo()
 
@@ -35,33 +35,29 @@ excl_bothCatAndDog = [
     'PetImages/Cat/5583.jpg',
     'PetImages/Cat/9250.jpg',
     'PetImages/Cat/7575.jpg',
+    'PetImages/Cat/9882.jpg',
+    'PetImages/Cat/3425.jpg',
 ]
 excl_noCatOrDog = [
     'PetImages/Cat/5351.jpg',
     'PetImages/Dog/8736.jpg',
     'PetImages/Cat/10712.jpg',
-    'PetImages/Cat/9882.jpg',
     'PetImages/Dog/10801.jpg',
+    'PetImages/Dog/2614.jpg',
 ]
 excl_canHardToTell = [
     'PetImages/Cat/5324.jpg',
     'PetImages/Cat/3672.jpg',
-    'PetImages/Dog/8444.jpg',
-    'PetImages/Cat/6402.jpg',
-    'PetImages/Cat/8138.jpg',
-    'PetImages/Cat/2150.jpg',
+    'PetImages/Cat/12272.jpg',
 ]
 excl_misclassified = [
     'PetImages/Dog/11731.jpg',
     'PetImages/Dog/4334.jpg',
     'PetImages/Dog/7164.jpg',
 ]
+
 excl_all = excl_bothCatAndDog + excl_noCatOrDog + excl_canHardToTell + excl_misclassified
 print('Excluding {} samples'.format(len(excl_all)))
-
-
-def format_label(label):
-    return label_info.int2str(label)
 
 
 def input_preprocess(image, label):
@@ -115,22 +111,25 @@ trainSz = 60
 validSz = 20
 testSz = 20
 
-data_path = os.path.join(dataDir, dataset_name)
-tfds.load(dataset_name, data_dir=data_path)
+# This is for an initial downloading of the dataset
+#data_path = os.path.join(dataDir, dataset_name)
+#tfds.load(dataset_name, data_dir=data_path)
 
-# Slicing datasets: https://www.tensorflow.org/datasets/splits
-trainValidSz = trainSz + validSz
-allSz = trainValidSz + testSz
-if allSz > 100:
-    raise ValueError('Sum of train, validation, and test sets should be <= 100%, it is {}%'.format(allSz))
-trainStr = 'train[:{}%]'.format(trainSz)
-validStr = 'train[{}%:{}%]'.format(trainSz, trainValidSz)
-testStr = 'train[{}%:{}%]'.format(trainValidSz, allSz)
-(ds_train, ds_valid, ds_test), ds_info = tfds.load(dataset_name, split=[trainStr, validStr, testStr], with_info=True, as_supervised=True, shuffle_files=True)
+# Dataset from local folder - copied/cleaned
+root_path = os.path.join(dataDir, 'cats_vs_dogs/downloads/copy_cleaned')
+ds = tfds.folder_dataset.ImageFolder(root_path) # , shape=(IMG_SIZE, IMG_SIZE, 3)
+ds_train, ds_valid, ds_test = ds.as_dataset(split=['train', 'validation', 'test'], as_supervised=True, shuffle_files=True)
+ds_info = ds.info
+
+# Original dataset
+#trainStr, validStr, testStr = buildSplitStrings(trainSz, validSz, testSz)
+#(ds_train, ds_valid, ds_test), ds_info = tfds.load(dataset_name, split=[trainStr, validStr, testStr], with_info=True, as_supervised=True, shuffle_files=True)
+
+
 print('Training set: {}'.format(tf.data.experimental.cardinality(ds_train).numpy()))
 print('Validation set: {}'.format(tf.data.experimental.cardinality(ds_valid).numpy()))
 print('Test set: {}'.format(tf.data.experimental.cardinality(ds_test).numpy()))
-NUM_CLASSES = ds_info.features["label"].num_classes
+NUM_CLASSES = getNumClasses(ds_info)
 
 t1 = time.time()
 
@@ -139,11 +138,10 @@ ds_train = ds_train.map(lambda image, label: (tf.image.resize(image, size), labe
 ds_valid = ds_valid.map(lambda image, label: (tf.image.resize(image, size), label))
 ds_test = ds_test.map(lambda image, label: (tf.image.resize(image, size), label))
 
-label_info = ds_info.features["label"]
 for i, (image, label) in enumerate(ds_train.take(9)):
     ax = plt.subplot(3, 3, i + 1)
     plt.imshow(image.numpy().astype("uint8"))
-    plt.title("{}".format(format_label(label)))
+    plt.title("{}".format(labelToText(label, ds_info)))
     plt.axis("off")
 
 img_augmentation = Sequential(
@@ -162,7 +160,7 @@ for image, label in ds_train.take(1):
         ax = plt.subplot(3, 3, i + 1)
         aug_img = img_augmentation(tf.expand_dims(image, axis=0))
         plt.imshow(aug_img[0].numpy().astype("uint8"))
-        plt.title("{}".format(format_label(label)))
+        plt.title("{}".format(labelToText(label, ds_info)))
         plt.axis("off")
 
 
@@ -207,7 +205,7 @@ if 0:
     t3 = time.time()
     model = unfreeze_model(model)
     print(model.summary())
-    epochs = 3  # @param {type: "slider", min:8, max:50}
+    epochs = 30  # @param {type: "slider", min:8, max:50}
     history = model.fit(ds_train, epochs=epochs, batch_size=batch_size, validation_data=ds_valid, validation_batch_size=batch_size) #verbose=2
 
     model.save(os.path.join(outputs_dir, modelName_FineTuned))
@@ -232,60 +230,21 @@ if 0:
     res = model.evaluate(ds_test, batch_size=batch_size)
     print('Test loss, accuracy: {}'.format(res))
 
-ds = tfds.load(dataset_name, shuffle_files=False, batch_size=512)
-"""ds = ds['train']
-images = np.concatenate([x['image'] for x in ds], axis=0)
-fNames = np.concatenate([x['image/filename'] for x in ds], axis=0)
-labels = np.concatenate([x['label'] for x in ds], axis=0)"""
-t1 = time.time()
-err = 0
-fNames = []
-for x in ds['train']:
-    img = tf.image.resize(x['image'], size)
-    pred = model.predict(img)
-    pred1 = pred[:,1]
-    label = x['label'].numpy()
-    for pr, lbl, fn in zip(pred1, label, x['image/filename']):
-        predDig = (pr > 0.5)
-        if predDig != lbl:
-            fName = fn.numpy().decode()
-            fNames.append(fName)
-            print(fName, lbl, pr)
-            err += 1
-print(err)
-t2 = time.time()
-print('It took {} sec to train the model'.format(t2 - t1))
+def resizeImage(x, size):
+    """Resizes image of a dataset element. Dataset should be as a dict (not 'as_supervised')"""
+    x['image'] = tf.image.resize(x['image'], size)
+    return x
 
-for fn in fNames:
-    print('\'{}\','.format(fn))
 
-"""images = []
-labels = []
-for img, lbl in ds_test:
-    if images == []:
-        images = img
-        labels = lbl
-    else:
-        images = np.concatenate([images, img], axis=0)
-        labels = np.concatenate([labels, lbl], axis=0)
-#labels = np.concatenate([lbl for _, lbl in ds_valid], axis=0)
-#pred = model.predict(ds_test)
-n = 4600
-pred = model.predict(x=images[:n], batch_size=batch_size)
-#diffs = labels[:,0] - pred[:,0]
-print('Total test: {}'.format(len(pred)))
-nErr = 0
+#ds = tfds.load(dataset_name, shuffle_files=False, batch_size=512)
+ds = ds.as_dataset(split=['validation'], as_supervised=False, shuffle_files=False, batch_size=256)[0]
+ds = ds.map(lambda x: resizeImage(x, size))
+
 plt.clf()
-plt.show()
-for i, (img, y, h) in enumerate(zip(images[:n], labels[:n], pred)):
-    y = 1 if y[0] > 0.5 else 0
-    h = 1 if h[0] > 0.5 else 0
-    if h != y:
-        nErr += 1
-        plt.imshow(img.astype("uint8"))
-        print(i)
-        #print(img['image/filename'].numpy().decode())
-print('Errors: {}'.format(nErr))"""
+res, numErrors = findMisclassifiedImages(model, ds, showImages=True)
+print(numErrors)
+for fn, lbl, prob in res:
+    print('\'{}\','.format(fn))
 
 
 """
@@ -323,4 +282,17 @@ Epoch 13/20
 Fine-tuning:
 Epoch 30/30
 234/234 [==============================] - 95s 405ms/step - loss: 0.0138 - accuracy: 0.9956 - val_loss: 0.0018 - val_accuracy: 0.9994
+"""
+
+"""
+After cleaning up dataset
+Feature extraction:
+Epoch 15/15
+217/217 [==============================] - 77s 356ms/step - loss: 0.0977 - accuracy: 0.9691 - val_loss: 0.0153 - val_accuracy: 0.9954
+It took 1174.380137205124 sec to train the model
+Fine-tuning:
+TODO: train for longer
+Epoch 3/3
+217/217 [==============================] - 80s 370ms/step - loss: 0.0609 - accuracy: 0.9763 - val_loss: 0.0140 - val_accuracy: 0.9965
+
 """
