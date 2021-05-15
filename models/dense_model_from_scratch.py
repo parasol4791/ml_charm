@@ -12,7 +12,7 @@ from utils.plotting import plot_accuracy_loss
 import matplotlib.pyplot as plt
 
 # These imports are for comparing native model with an equivalent one from Keras
-from keras import models, layers, optimizers
+#from keras import models, layers, optimizers
 
 
 def sigmoid(x):
@@ -49,8 +49,7 @@ def make_samples(N):
         shuffle=True,
         random_state=None
     )
-    X = X.T
-    Y = Y.reshape(1, Y.shape[0])
+    Y = Y.reshape(Y.shape[0], 1)
     return X, Y
 
 
@@ -59,19 +58,21 @@ def init_parameters(n_x, n_h, n_y):
     scale = 0.1
     np.random.seed(3)
     params = {
-        'W1': np.random.randn(n_h, n_x) * scale,  # hidden layer
-        'b1': np.zeros((n_h, 1)),
-        'W2': np.random.randn(n_y, n_h) * scale,  # output layer
-        'b2': np.zeros((n_y, 1))
+        'W1': np.random.randn(n_h, n_x + 1) * scale,  # hidden layer, with bias
+        'W2': np.random.randn(n_y, n_h + 1) * scale,  # output layer, with bias
     }
     return params
 
 
 def forward_step(X, params):
     """Forward step - compute predictions. Returns layer activations"""
-    Z1 = np.dot(params['W1'], X) + params['b1']
+    bias = np.ones(X.shape(0), 1)
+    xWithBias = np.append(bias, x, axis=1)
+
+    Z1 = np.dot(xWithBias, params['W1'].T)
     A1 = np.tanh(Z1)
-    Z2 = np.dot(params['W2'], A1) + params['b2']
+    A1withBias = np.append(bias, A1)
+    Z2 = np.dot(A1withBias, params['W2'].T)
     A2 = sigmoid(Z2)
     return A1, A2
 
@@ -79,21 +80,23 @@ def forward_step(X, params):
 def compute_loss(Y, A2):
     """Compute cross-entropy loss - how much predictions differ from actual values"""
     # Loss = - Sum_samples[ Sum_classes[ Y_s_c * log(A2_s_c) ] ]
-    logprobs = np.multiply(np.log(A2), Y) + np.multiply((1 - Y), np.log(1 - A2))
-    loss = -np.average(logprobs)
+    logprobs = -np.multiply(Y, np.log(A2)) - np.multiply((1 - Y), np.log(1 - A2))
+    loss = np.average(logprobs)
     return loss
 
 
 def compute_gradients(X, Y, A1, A2, params):
     """Back-propagation - compute gradients"""
-    scale = 1.0 / Y.shape[1]  # inverse of a number of samples
+    scale = 1.0 / Y.shape[0]  # inverse of a number of samples
+    # Diffs
     dZ2 = A2 - Y
-    dZ1 = np.multiply(np.dot(params['W2'].T, dZ2), 1 - np.power(A1, 2))
+    dZ1 = np.dot(dZ2, params['W2'])
+    dZ1 = np.multiply( np.multiply(dZ1, A1), (1-A1))  # .*A1.*(1-A1)
     grads = {
-        'dW2': scale * np.dot(dZ2, A2.T),
-        'db2': scale * np.sum(dZ2, axis=1, keepdims=True),
-        'dW1': scale * np.dot(dZ1, X.T),
-        'db1': scale * np.sum(dZ1, axis=1, keepdims=True)
+        'dW2': scale * np.dot(dZ2.T, A1),  # [n_labeles x n_hidden]
+        'db2': scale * np.sum(dZ2, axis=0, keepdims=True),
+        'dW1': scale * np.dot(dZ1.T, X),
+        'db1': scale * np.sum(dZ1, axis=0, keepdims=True)
     }
     return grads
 
@@ -153,14 +156,14 @@ def finish_epoch_history(history):
 
 def sigle_pass(x_train, y_train, batch_size, params, history):
     """Pass overall samples, in batches, to train the model and update model parameters"""
-    n_samples = x_train.shape[1]
+    n_samples = x_train.shape[0]
     history = init_batch_history(history)
 
     for idx0 in range(0, n_samples, batch_size):
         idx = idx0 + batch_size
         idx1 = idx if idx < n_samples else n_samples - 1
-        X = x_train[:, idx0: idx1]
-        Y = y_train[:, idx0: idx1]
+        X = x_train[idx0: idx1, :]
+        Y = y_train[idx0: idx1, :]
         A1, A2 = forward_step(X, params)  # returns layer activations
         history['loss_batch_train'].append(compute_loss(Y, A2))
         grads = compute_gradients(X, Y, A1, A2, params)

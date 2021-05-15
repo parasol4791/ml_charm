@@ -13,7 +13,7 @@ from tensorflow.keras.applications import EfficientNetB4
 import matplotlib.pyplot as plt
 from utils.plotting import plot_accuracy_loss
 from utils.compatibility import compat_no_algo
-from utils.tf_dataset import buildSplitStrings, labelToText, getFileName, getNumClasses, findMisclassifiedImages
+from utils.tf_dataset import buildSplitStrings, labelToText, getFileName, getNumClasses, findMislabeledImages
 
 compat_no_algo()
 
@@ -241,7 +241,7 @@ ds = ds.as_dataset(split=['validation'], as_supervised=False, shuffle_files=Fals
 ds = ds.map(lambda x: resizeImage(x, size))
 
 plt.clf()
-res, numErrors = findMisclassifiedImages(model, ds, showImages=True)
+res, numErrors = findMislabeledImages(model, ds, showImages=True, printMislabeled=True)
 print(numErrors)
 for fn, lbl, prob in res:
     print('\'{}\','.format(fn))
@@ -291,8 +291,8 @@ Epoch 15/15
 217/217 [==============================] - 77s 356ms/step - loss: 0.0977 - accuracy: 0.9691 - val_loss: 0.0153 - val_accuracy: 0.9954
 It took 1174.380137205124 sec to train the model
 Fine-tuning:
-TODO: train for longer
-Epoch 3/3
-217/217 [==============================] - 80s 370ms/step - loss: 0.0609 - accuracy: 0.9763 - val_loss: 0.0140 - val_accuracy: 0.9965
-
+Epoch 4/30
+217/217 [==============================] - 80s 370ms/step - loss: 0.0492 - accuracy: 0.9799 - val_loss: 0.0122 - val_accuracy: 0.9972
+Epoch 30/30
+217/217 [==============================] - 81s 371ms/step - loss: 0.0155 - accuracy: 0.9944 - val_loss: 0.0158 - val_accuracy: 0.9950
 """

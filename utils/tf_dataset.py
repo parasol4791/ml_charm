@@ -5,6 +5,7 @@ import time
 import numpy as np
 import tensorflow as tf
 import tensorflow_datasets as tfds
+from tensorflow.python.data.ops.dataset_ops import FilterDataset
 import matplotlib.pyplot as plt
 from utils.files import make_dir
 
@@ -29,9 +30,19 @@ def labelToText(label, ds_info):
     label_info = ds_info.features["label"]
     return label_info.int2str(label)
 
+
 def getNumClasses(ds_info):
     """Returns a number of classes in a dataset"""
     return ds_info.features["label"].num_classes
+
+
+def getDatasetSize(ds):
+    """Returns dataset size (cardinality)"""
+    if isinstance(ds, FilterDataset):
+        # Cardinality of FilterDataset is not defined, need to compute it
+        return len(list(ds.as_numpy_iterator()))
+    else:
+        return tf.data.experimental.cardinality(ds).numpy()
 
 
 def viewImage(elem):
@@ -168,5 +179,16 @@ def skipFiles(x, filesToSkip):
 def onlySkippedFiles(x, filesToSkip):
     """Returns True only for files that have to be skipped"""
     return tf.equal(skipFiles(x, filesToSkip), False)
+
+"""
+An example of using these filters:
+filesToSkip = ['PetImages/Cat/3658.jpg', 'PetImages/Dog/4218.jpg', 'PetImages/Cat/7194.jpg',]
+ds = tfds.load('cats_vs_dogs')['train']
+print(dataset.cardinality())
+ds1 = ds.filter(lambda x: skipFiles(x, filesToSkip))
+print(getDatasetSize(ds1))
+ds2 = ds.filter(lambda x: onlySkippedFiles(x, filesToSkip))
+print(getDatasetSize(ds2))
+"""
 
 #########  END OF FILTERS  ##########
