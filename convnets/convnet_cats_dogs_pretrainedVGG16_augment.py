@@ -7,7 +7,7 @@ import os
 import time
 
 from keras import models, layers, optimizers, regularizers
-from keras.applications import VGG16
+from keras.applications.vgg16 import VGG16
 from keras.preprocessing.image import ImageDataGenerator
 
 # To avoid an error (see the method)

@@ -5,7 +5,7 @@ import time
 import matplotlib.pyplot as plt
 from keras import models, layers
 from keras.datasets import mnist
-from keras.utils import to_categorical
+from keras.utils.np_utils import to_categorical
 
 # To avoid an error (see the method)
 from utils.compatibility import compat_no_algo

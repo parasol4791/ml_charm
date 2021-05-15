@@ -5,7 +5,7 @@ import time
 import numpy as np
 from keras import models, layers
 from keras.datasets import reuters
-from keras.utils import to_categorical
+from keras.utils.np_utils import to_categorical
 
 from utils.data_preprocessing import decodeSequence, vectorize
 from utils.plotting import plot_accuracy_loss
